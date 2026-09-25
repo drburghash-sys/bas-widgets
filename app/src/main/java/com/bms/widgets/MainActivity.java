@@ -45,7 +45,7 @@ public class MainActivity extends Activity {
         root.addView(section("حجم الخط"), fullWrap(0, 4));
 
         fontSize = new SeekBar(this);
-        fontSize.setMax(80); // 70% إلى 150%
+        fontSize.setMax(80);
         int savedPercent = prefs.getInt("font_percent", 100);
         fontSize.setProgress(Math.max(0, Math.min(80, savedPercent - 70)));
         root.addView(fontSize, new LinearLayout.LayoutParams(
@@ -53,6 +53,12 @@ public class MainActivity extends Activity {
 
         TextView sizeHint = text("70%                                      150%", 12, 0xFF8F98A5);
         root.addView(sizeHint, fullWrap(0, 16));
+
+        TextView unifiedHint = text(
+                "حجم الخط يطبّق معًا على اليوم والتاريخ الميلادي والهجري وأوقات الصلاة.",
+                13, 0xFF9DA6B2);
+        unifiedHint.setGravity(Gravity.RIGHT);
+        root.addView(unifiedHint, fullWrap(0, 14));
 
         root.addView(section("لون الخط"), fullWrap(0, 6));
         colorSpinner = new Spinner(this);
@@ -69,32 +75,40 @@ public class MainActivity extends Activity {
         root.addView(themeSpinner, fullWrap(0, 20));
 
         Button save = new Button(this);
-        save.setText("حفظ وتطبيق على الويدجت");
+        save.setText("حفظ وتطبيق على كل الويدجت");
         save.setAllCaps(false);
         save.setTextSize(17);
         save.setOnClickListener(v -> saveAndApply());
         root.addView(save, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, dp(54)));
 
+        Button addCombined = new Button(this);
+        addCombined.setText("إضافة ويدجت التاريخ + الصلاة");
+        addCombined.setAllCaps(false);
+        addCombined.setOnClickListener(v -> pinWidget(CombinedWidgetProvider.class));
+        LinearLayout.LayoutParams combinedParams = fullWrap(14, 0);
+        combinedParams.height = dp(52);
+        root.addView(addCombined, combinedParams);
+
         Button addDate = new Button(this);
-        addDate.setText("إضافة ويدجت التاريخ");
+        addDate.setText("إضافة ويدجت التاريخ فقط");
         addDate.setAllCaps(false);
         addDate.setOnClickListener(v -> pinWidget(DateTimeWidgetProvider.class));
-        LinearLayout.LayoutParams addDateParams = fullWrap(14, 0);
-        addDateParams.height = dp(50);
+        LinearLayout.LayoutParams addDateParams = fullWrap(8, 0);
+        addDateParams.height = dp(48);
         root.addView(addDate, addDateParams);
 
         Button addPrayer = new Button(this);
-        addPrayer.setText("إضافة ويدجت الصلاة");
+        addPrayer.setText("إضافة ويدجت الصلاة فقط");
         addPrayer.setAllCaps(false);
         addPrayer.setOnClickListener(v -> pinWidget(PrayerTimesWidgetProvider.class));
         LinearLayout.LayoutParams addPrayerParams = fullWrap(8, 0);
-        addPrayerParams.height = dp(50);
+        addPrayerParams.height = dp(48);
         root.addView(addPrayer, addPrayerParams);
 
         TextView note = text(
-                "الخلفيات الحالية: داكنة، شفافة، ليفر، النصر، السعودية. " +
-                "حجم الخط ثابت أثناء تمديد الويدجت؛ تغيير العرض أو الطول لا يغيّر حجم النص.",
+                "الويدجت المدمجة تعرض الميلادي والهجري والموقع والوقت في الأعلى، " +
+                "والفجر والشروق والظهر والعصر والمغرب والعشاء في الأسفل.",
                 13, 0xFF8F98A5);
         note.setGravity(Gravity.CENTER);
         root.addView(note, fullWrap(16, 0));
@@ -113,18 +127,21 @@ public class MainActivity extends Activity {
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
 
         ComponentName dateProvider = new ComponentName(this, DateTimeWidgetProvider.class);
-        int[] dateIds = manager.getAppWidgetIds(dateProvider);
-        for (int id : dateIds) {
+        for (int id : manager.getAppWidgetIds(dateProvider)) {
             DateTimeWidgetProvider.updateWidget(this, manager, id);
         }
 
         ComponentName prayerProvider = new ComponentName(this, PrayerTimesWidgetProvider.class);
-        int[] prayerIds = manager.getAppWidgetIds(prayerProvider);
-        for (int id : prayerIds) {
+        for (int id : manager.getAppWidgetIds(prayerProvider)) {
             PrayerTimesWidgetProvider.updateWidget(this, manager, id);
         }
 
-        Toast.makeText(this, "تم تطبيق الإعدادات", Toast.LENGTH_SHORT).show();
+        ComponentName combinedProvider = new ComponentName(this, CombinedWidgetProvider.class);
+        for (int id : manager.getAppWidgetIds(combinedProvider)) {
+            CombinedWidgetProvider.updateWidget(this, manager, id);
+        }
+
+        Toast.makeText(this, "تم تطبيق الإعدادات على كل الويدجت", Toast.LENGTH_SHORT).show();
     }
 
     private void pinWidget(Class<?> providerClass) {
