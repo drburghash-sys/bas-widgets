@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">BMS Widgets</string>
     <string name="widget_description">التاريخ والوقت الميلادي والهجري</string>
+    <string name="prayer_widget_description">مواقيت الصلاة والشروق في تبوك</string>
 </resources>
