@@ -3,4 +3,5 @@
     <string name="widget_description">التاريخ والوقت الميلادي والهجري</string>
     <string name="prayer_widget_description">مواقيت الصلاة والشروق في تبوك</string>
     <string name="combined_widget_description">التاريخ الهجري والميلادي مع مواقيت الصلاة والشروق</string>
+    <string name="bas_platform_widget_description">فتح BAS Platform مباشرة من سطح المكتب</string>
 </resources>
