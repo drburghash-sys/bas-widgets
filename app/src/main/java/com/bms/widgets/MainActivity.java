@@ -90,6 +90,14 @@ public class MainActivity extends Activity {
         combinedParams.height = dp(52);
         root.addView(addCombined, combinedParams);
 
+        Button addBas = new Button(this);
+        addBas.setText("إضافة ويدجت BAS Platform");
+        addBas.setAllCaps(false);
+        addBas.setOnClickListener(v -> pinWidget(BasPlatformWidgetProvider.class));
+        LinearLayout.LayoutParams basParams = fullWrap(8, 0);
+        basParams.height = dp(52);
+        root.addView(addBas, basParams);
+
         Button addDate = new Button(this);
         addDate.setText("إضافة ويدجت التاريخ فقط");
         addDate.setAllCaps(false);
@@ -107,8 +115,7 @@ public class MainActivity extends Activity {
         root.addView(addPrayer, addPrayerParams);
 
         TextView note = text(
-                "الويدجت المدمجة تعرض الميلادي والهجري والموقع والوقت في الأعلى، " +
-                "والفجر والشروق والظهر والعصر والمغرب والعشاء في الأسفل.",
+                "BAS Platform Widget يفتح المنصة مباشرة، والويدجت الأخرى تبقى مستقلة كما هي.",
                 13, 0xFF8F98A5);
         note.setGravity(Gravity.CENTER);
         root.addView(note, fullWrap(16, 0));
@@ -139,6 +146,11 @@ public class MainActivity extends Activity {
         ComponentName combinedProvider = new ComponentName(this, CombinedWidgetProvider.class);
         for (int id : manager.getAppWidgetIds(combinedProvider)) {
             CombinedWidgetProvider.updateWidget(this, manager, id);
+        }
+
+        ComponentName basProvider = new ComponentName(this, BasPlatformWidgetProvider.class);
+        for (int id : manager.getAppWidgetIds(basProvider)) {
+            BasPlatformWidgetProvider.updateWidget(this, manager, id);
         }
 
         Toast.makeText(this, "تم تطبيق الإعدادات على كل الويدجت", Toast.LENGTH_SHORT).show();
