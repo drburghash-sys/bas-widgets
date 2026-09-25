@@ -3,60 +3,145 @@ package com.bms.widgets;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
+
+    private static final String PREFS = "bms_widget_prefs";
+    private SharedPreferences prefs;
+    private SeekBar fontSize;
+    private Spinner colorSpinner;
+    private Spinner themeSpinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
 
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER_HORIZONTAL);
-        root.setPadding(dp(24), dp(36), dp(24), dp(24));
+        root.setPadding(dp(22), dp(28), dp(22), dp(28));
         root.setBackgroundColor(0xFF101318);
 
         TextView title = text("BMS Widgets", 28, 0xFFFFFFFF);
         title.setGravity(Gravity.CENTER);
-        root.addView(title, matchWrap(dp(0), dp(14)));
+        root.addView(title, fullWrap(0, 6));
 
-        TextView subtitle = text("ويدجت التاريخ والوقت", 20, 0xFFE7E9ED);
+        TextView subtitle = text("إعدادات الويدجت", 18, 0xFFC7CED8);
         subtitle.setGravity(Gravity.CENTER);
-        root.addView(subtitle, matchWrap(dp(0), dp(8)));
+        root.addView(subtitle, fullWrap(0, 22));
 
-        TextView desc = text("يعرض اليوم والتاريخ الميلادي والهجري والوقت على سطح المكتب.\n\nاضغط الزر أدناه ثم اختر BMS Widgets من قائمة الويدجت.", 16, 0xFFB9C0CA);
-        desc.setGravity(Gravity.CENTER);
-        root.addView(desc, matchWrap(dp(0), dp(28)));
+        root.addView(section("حجم الخط"), fullWrap(0, 4));
 
-        Button addButton = new Button(this);
-        addButton.setText("إضافة الويدجت");
-        addButton.setAllCaps(false);
-        addButton.setTextSize(17);
-        addButton.setOnClickListener(v -> requestWidgetPin());
-        root.addView(addButton, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, dp(54)));
+        fontSize = new SeekBar(this);
+        fontSize.setMax(80); // 70% إلى 150%
+        int savedPercent = prefs.getInt("font_percent", 100);
+        fontSize.setProgress(Math.max(0, Math.min(80, savedPercent - 70)));
+        root.addView(fontSize, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        TextView note = text("إذا لم يفتح الاختيار تلقائيًا: اضغط مطولًا على سطح المكتب ← Widgets ← BMS Widgets.", 14, 0xFF8F98A5);
+        TextView sizeHint = text("70%                                      150%", 12, 0xFF8F98A5);
+        root.addView(sizeHint, fullWrap(0, 16));
+
+        root.addView(section("لون الخط"), fullWrap(0, 6));
+        colorSpinner = new Spinner(this);
+        String[] colors = {"أبيض", "كريمي", "أزرق فاتح", "أخضر فاتح", "ذهبي", "أحمر فاتح"};
+        colorSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, colors));
+        colorSpinner.setSelection(prefs.getInt("text_color_index", 0));
+        root.addView(colorSpinner, fullWrap(0, 18));
+
+        root.addView(section("الخلفية"), fullWrap(0, 6));
+        themeSpinner = new Spinner(this);
+        String[] themes = {"داكنة", "شفافة", "ليفر", "النصر", "السعودية"};
+        themeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, themes));
+        themeSpinner.setSelection(prefs.getInt("theme_index", 0));
+        root.addView(themeSpinner, fullWrap(0, 20));
+
+        Button save = new Button(this);
+        save.setText("حفظ وتطبيق على الويدجت");
+        save.setAllCaps(false);
+        save.setTextSize(17);
+        save.setOnClickListener(v -> saveAndApply());
+        root.addView(save, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(54)));
+
+        Button addDate = new Button(this);
+        addDate.setText("إضافة ويدجت التاريخ");
+        addDate.setAllCaps(false);
+        addDate.setOnClickListener(v -> pinWidget(DateTimeWidgetProvider.class));
+        LinearLayout.LayoutParams addDateParams = fullWrap(14, 0);
+        addDateParams.height = dp(50);
+        root.addView(addDate, addDateParams);
+
+        Button addPrayer = new Button(this);
+        addPrayer.setText("إضافة ويدجت الصلاة");
+        addPrayer.setAllCaps(false);
+        addPrayer.setOnClickListener(v -> pinWidget(PrayerTimesWidgetProvider.class));
+        LinearLayout.LayoutParams addPrayerParams = fullWrap(8, 0);
+        addPrayerParams.height = dp(50);
+        root.addView(addPrayer, addPrayerParams);
+
+        TextView note = text(
+                "الخلفيات الحالية: داكنة، شفافة، ليفر، النصر، السعودية. " +
+                "حجم الخط ثابت أثناء تمديد الويدجت؛ تغيير العرض أو الطول لا يغيّر حجم النص.",
+                13, 0xFF8F98A5);
         note.setGravity(Gravity.CENTER);
-        root.addView(note, matchWrap(dp(0), dp(16)));
+        root.addView(note, fullWrap(16, 0));
 
         setContentView(root);
     }
 
-    private void requestWidgetPin() {
+    private void saveAndApply() {
+        int fontPercent = fontSize.getProgress() + 70;
+        prefs.edit()
+                .putInt("font_percent", fontPercent)
+                .putInt("text_color_index", colorSpinner.getSelectedItemPosition())
+                .putInt("theme_index", themeSpinner.getSelectedItemPosition())
+                .apply();
+
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+
+        ComponentName dateProvider = new ComponentName(this, DateTimeWidgetProvider.class);
+        int[] dateIds = manager.getAppWidgetIds(dateProvider);
+        for (int id : dateIds) {
+            DateTimeWidgetProvider.updateWidget(this, manager, id);
+        }
+
+        ComponentName prayerProvider = new ComponentName(this, PrayerTimesWidgetProvider.class);
+        int[] prayerIds = manager.getAppWidgetIds(prayerProvider);
+        for (int id : prayerIds) {
+            PrayerTimesWidgetProvider.updateWidget(this, manager, id);
+        }
+
+        Toast.makeText(this, "تم تطبيق الإعدادات", Toast.LENGTH_SHORT).show();
+    }
+
+    private void pinWidget(Class<?> providerClass) {
         AppWidgetManager manager = getSystemService(AppWidgetManager.class);
-        ComponentName provider = new ComponentName(this, DateTimeWidgetProvider.class);
+        ComponentName provider = new ComponentName(this, providerClass);
         if (manager != null && manager.isRequestPinAppWidgetSupported()) {
             manager.requestPinAppWidget(provider, null, null);
         } else {
-            Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
-            try { startActivity(intent); } catch (Exception ignored) {}
+            Toast.makeText(this, "أضف الويدجت من قائمة Widgets في الشاشة الرئيسية", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private TextView section(String value) {
+        TextView view = text(value, 16, 0xFFFFFFFF);
+        view.setGravity(Gravity.RIGHT);
+        view.setTextDirection(View.TEXT_DIRECTION_RTL);
+        return view;
     }
 
     private TextView text(String value, int sizeSp, int color) {
@@ -68,11 +153,11 @@ public class MainActivity extends Activity {
         return view;
     }
 
-    private LinearLayout.LayoutParams matchWrap(int top, int bottom) {
+    private LinearLayout.LayoutParams fullWrap(int top, int bottom) {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT);
-        p.setMargins(0, top, 0, bottom);
+        p.setMargins(0, dp(top), 0, dp(bottom));
         return p;
     }
 
