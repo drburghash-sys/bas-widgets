@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/prayerWidgetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/prayerThemeMark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text=""
+        android:textColor="#22FFFFFF"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        android:singleLine="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/prayerLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="تبوك"
+            android:textColor="#CFFFFFFF"
+            android:textSize="11sp"
+            android:gravity="end"
+            android:singleLine="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/ishaLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="العشاء" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/ishaTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="--:--" android:textColor="#FFFFFF" android:textSize="16sp" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/maghribLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="المغرب" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/maghribTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="--:--" android:textColor="#FFFFFF" android:textSize="16sp" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/asrLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="العصر" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/asrTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="--:--" android:textColor="#FFFFFF" android:textSize="16sp" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/dhuhrLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="الظهر" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/dhuhrTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="--:--" android:textColor="#FFFFFF" android:textSize="16sp" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/sunriseLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="الشروق" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/sunriseTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="--:--" android:textColor="#FFFFFF" android:textSize="16sp" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/fajrLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="الفجر" android:textColor="#FFFFFF" android:textSize="14sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/fajrTime" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:text="--:--" android:textColor="#FFFFFF" android:textSize="16sp" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>
