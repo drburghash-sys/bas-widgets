@@ -1,56 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/widgetRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:padding="18dp"
-    android:background="@drawable/widget_background">
-
-    <TextClock
-        android:id="@+id/dayName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:format12Hour="EEEE"
-        android:format24Hour="EEEE"
-        android:textColor="#D8DEE8"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:gravity="start" />
-
-    <TextClock
-        android:id="@+id/gregorianDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:format12Hour="d MMMM yyyy"
-        android:format24Hour="d MMMM yyyy"
-        android:textColor="#FFFFFF"
-        android:textSize="23sp"
-        android:textStyle="bold"
-        android:gravity="start" />
+    android:background="@drawable/widget_background"
+    android:padding="14dp">
 
     <TextView
-        android:id="@+id/hijriDate"
+        android:id="@+id/themeMark"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="3dp"
+        android:layout_height="match_parent"
+        android:gravity="center"
         android:text=""
-        android:textColor="#AFC4DB"
-        android:textSize="15sp"
-        android:gravity="start" />
-
-    <TextClock
-        android:id="@+id/currentTime"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:format12Hour="h:mm a"
-        android:format24Hour="HH:mm"
-        android:textColor="#FFFFFF"
-        android:textSize="30sp"
+        android:textColor="#22FFFFFF"
+        android:textSize="34sp"
         android:textStyle="bold"
-        android:gravity="end" />
+        android:singleLine="true" />
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <TextClock
+            android:id="@+id/dayName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:format12Hour="EEEE"
+            android:format24Hour="EEEE"
+            android:textColor="#D8DEE8"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:gravity="start" />
+
+        <TextClock
+            android:id="@+id/gregorianDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:format12Hour="d MMMM yyyy"
+            android:format24Hour="d MMMM yyyy"
+            android:textColor="#FFFFFF"
+            android:textSize="23sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/hijriDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:text=""
+            android:textColor="#AFC4DB"
+            android:textSize="15sp"
+            android:singleLine="true"
+            android:gravity="start" />
+
+        <TextClock
+            android:id="@+id/currentTime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:format12Hour="h:mm a"
+            android:format24Hour="HH:mm"
+            android:textColor="#FFFFFF"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:singleLine="true"
+            android:gravity="end" />
+
+    </LinearLayout>
+</FrameLayout>
