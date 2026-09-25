@@ -81,6 +81,8 @@ public class CombinedWidgetProvider extends AppWidgetProvider {
         views.setTextViewTextSize(
                 R.id.combinedCurrentTime, TypedValue.COMPLEX_UNIT_SP, 15f * scale);
 
+        WidgetStyle.applyClockFormat(context, views, R.id.combinedCurrentTime);
+
         int[] labels = {
                 R.id.combinedFajrLabel, R.id.combinedSunriseLabel, R.id.combinedDhuhrLabel,
                 R.id.combinedAsrLabel, R.id.combinedMaghribLabel, R.id.combinedIshaLabel

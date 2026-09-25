@@ -34,6 +34,7 @@ public class DateTimeWidgetProvider extends AppWidgetProvider {
         super.onReceive(context, intent);
         String action = intent.getAction();
         if (Intent.ACTION_DATE_CHANGED.equals(action)
+                || Intent.ACTION_TIME_CHANGED.equals(action)
                 || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
                 || Intent.ACTION_LOCALE_CHANGED.equals(action)) {
             AppWidgetManager manager = AppWidgetManager.getInstance(context);
@@ -63,6 +64,8 @@ public class DateTimeWidgetProvider extends AppWidgetProvider {
         views.setTextViewTextSize(R.id.gregorianDate, TypedValue.COMPLEX_UNIT_SP, 23f * scale);
         views.setTextViewTextSize(R.id.hijriDate, TypedValue.COMPLEX_UNIT_SP, 15f * scale);
         views.setTextViewTextSize(R.id.currentTime, TypedValue.COMPLEX_UNIT_SP, 30f * scale);
+
+        WidgetStyle.applyClockFormat(context, views, R.id.currentTime);
 
         Intent openApp = new Intent(context, MainActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(

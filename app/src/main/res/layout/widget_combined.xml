@@ -49,7 +49,8 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:singleLine="true"
-                    android:gravity="start" />
+                    android:gravity="start"
+                    android:layout_marginRight="10dp" />
 
                 <TextClock
                     android:id="@+id/combinedGregorianDate"
@@ -62,7 +63,8 @@
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:singleLine="true"
-                    android:gravity="end" />
+                    android:gravity="end"
+                    android:layout_marginLeft="10dp" />
             </LinearLayout>
 
             <LinearLayout

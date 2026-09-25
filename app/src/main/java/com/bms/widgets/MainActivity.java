@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     private SeekBar fontSize;
     private Spinner colorSpinner;
     private Spinner themeSpinner;
+    private Spinner clockSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +56,17 @@ public class MainActivity extends Activity {
         root.addView(sizeHint, fullWrap(0, 16));
 
         TextView unifiedHint = text(
-                "حجم الخط يطبّق معًا على اليوم والتاريخ الميلادي والهجري وأوقات الصلاة.",
+                "حجم الخط يطبّق معًا على التاريخ والهجري والميلادي وأوقات الصلاة.",
                 13, 0xFF9DA6B2);
         unifiedHint.setGravity(Gravity.RIGHT);
         root.addView(unifiedHint, fullWrap(0, 14));
+
+        root.addView(section("نظام الساعة"), fullWrap(0, 6));
+        clockSpinner = new Spinner(this);
+        String[] clockModes = {"12 ساعة", "24 ساعة"};
+        clockSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, clockModes));
+        clockSpinner.setSelection(prefs.getInt("clock_format_index", 0));
+        root.addView(clockSpinner, fullWrap(0, 18));
 
         root.addView(section("لون الخط"), fullWrap(0, 6));
         colorSpinner = new Spinner(this);
@@ -69,10 +77,22 @@ public class MainActivity extends Activity {
 
         root.addView(section("الخلفية"), fullWrap(0, 6));
         themeSpinner = new Spinner(this);
-        String[] themes = {"داكنة", "شفافة", "ليفر", "النصر", "السعودية"};
+        String[] themes = {
+                "داكنة",
+                "شفافة",
+                "ليفربول — أحمر وأبيض",
+                "النصر",
+                "السعودية — أخضر وأبيض"
+        };
         themeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, themes));
         themeSpinner.setSelection(prefs.getInt("theme_index", 0));
-        root.addView(themeSpinner, fullWrap(0, 20));
+        root.addView(themeSpinner, fullWrap(0, 10));
+
+        TextView backgroundHint = text(
+                "الخلفيات تتكيف تلقائيًا مع تمديد الويدجت عرضًا وطولًا بدون تغيير حجم النص.",
+                13, 0xFF9DA6B2);
+        backgroundHint.setGravity(Gravity.RIGHT);
+        root.addView(backgroundHint, fullWrap(0, 20));
 
         Button save = new Button(this);
         save.setText("حفظ وتطبيق على كل الويدجت");
@@ -89,14 +109,6 @@ public class MainActivity extends Activity {
         LinearLayout.LayoutParams combinedParams = fullWrap(14, 0);
         combinedParams.height = dp(52);
         root.addView(addCombined, combinedParams);
-
-        Button addBas = new Button(this);
-        addBas.setText("إضافة ويدجت BAS Platform");
-        addBas.setAllCaps(false);
-        addBas.setOnClickListener(v -> pinWidget(BasPlatformWidgetProvider.class));
-        LinearLayout.LayoutParams basParams = fullWrap(8, 0);
-        basParams.height = dp(52);
-        root.addView(addBas, basParams);
 
         Button addDate = new Button(this);
         addDate.setText("إضافة ويدجت التاريخ فقط");
@@ -115,7 +127,7 @@ public class MainActivity extends Activity {
         root.addView(addPrayer, addPrayerParams);
 
         TextView note = text(
-                "BAS Platform Widget يفتح المنصة مباشرة، والويدجت الأخرى تبقى مستقلة كما هي.",
+                "يمكن تغيير حجم كل ويدجت من الشاشة الرئيسية، وتبقى النصوص مستقلة عن أبعاد الخلفية.",
                 13, 0xFF8F98A5);
         note.setGravity(Gravity.CENTER);
         root.addView(note, fullWrap(16, 0));
@@ -127,6 +139,7 @@ public class MainActivity extends Activity {
         int fontPercent = fontSize.getProgress() + 70;
         prefs.edit()
                 .putInt("font_percent", fontPercent)
+                .putInt("clock_format_index", clockSpinner.getSelectedItemPosition())
                 .putInt("text_color_index", colorSpinner.getSelectedItemPosition())
                 .putInt("theme_index", themeSpinner.getSelectedItemPosition())
                 .apply();
@@ -146,11 +159,6 @@ public class MainActivity extends Activity {
         ComponentName combinedProvider = new ComponentName(this, CombinedWidgetProvider.class);
         for (int id : manager.getAppWidgetIds(combinedProvider)) {
             CombinedWidgetProvider.updateWidget(this, manager, id);
-        }
-
-        ComponentName basProvider = new ComponentName(this, BasPlatformWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(basProvider)) {
-            BasPlatformWidgetProvider.updateWidget(this, manager, id);
         }
 
         Toast.makeText(this, "تم تطبيق الإعدادات على كل الويدجت", Toast.LENGTH_SHORT).show();

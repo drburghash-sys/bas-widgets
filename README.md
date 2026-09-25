@@ -13,3 +13,11 @@
 
 ## البناء
 يتم بناء Debug APK تلقائيًا عبر GitHub Actions عند كل Push إلى main.
+
+
+## V1.4
+- Added explicit 12/24-hour clock selection.
+- Increased separation between Hijri and Gregorian dates.
+- Refined Liverpool red/white and Saudi green/white adaptive backgrounds.
+- Removed BAS Platform widget from the exposed widget list.
+- Widget backgrounds resize independently from text scaling.

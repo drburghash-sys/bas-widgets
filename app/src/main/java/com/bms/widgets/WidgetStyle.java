@@ -29,6 +29,17 @@ public final class WidgetStyle {
         }
     }
 
+    public static void applyClockFormat(Context context, RemoteViews views, int textClockId) {
+        SharedPreferences p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        boolean use24 = p.getInt("clock_format_index", 0) == 1;
+        String pattern = use24 ? "HH:mm" : "h:mm a";
+
+        // Set both formats to the same pattern so the widget follows the user's
+        // explicit choice instead of the phone-wide 12/24-hour setting.
+        views.setCharSequence(textClockId, "setFormat12Hour", pattern);
+        views.setCharSequence(textClockId, "setFormat24Hour", pattern);
+    }
+
     public static void applyBackgroundAndWatermark(
             Context context, RemoteViews views, int rootId, int watermarkId) {
 
@@ -48,7 +59,7 @@ public final class WidgetStyle {
             case 2:
                 background = R.drawable.widget_bg_liverpool;
                 mark = "LFC";
-                markColor = 0x20FFFFFF;
+                markColor = 0x28FFFFFF;
                 break;
             case 3:
                 background = R.drawable.widget_bg_nassr;
@@ -58,7 +69,7 @@ public final class WidgetStyle {
             case 4:
                 background = R.drawable.widget_bg_saudi;
                 mark = "🇸🇦";
-                markColor = 0x25FFFFFF;
+                markColor = 0x30FFFFFF;
                 break;
             default:
                 background = R.drawable.widget_background;
