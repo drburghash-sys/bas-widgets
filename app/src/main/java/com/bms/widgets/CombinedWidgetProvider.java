@@ -9,104 +9,43 @@ import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.util.TypedValue;
+import android.view.View;
 import android.widget.RemoteViews;
-
 import java.util.Date;
 import java.util.Locale;
 
 public class CombinedWidgetProvider extends AppWidgetProvider {
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int appWidgetId : appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId);
+    @Override public void onUpdate(Context c,AppWidgetManager m,int[] ids){for(int id:ids)updateWidget(c,m,id);}
+    @Override public void onAppWidgetOptionsChanged(Context c,AppWidgetManager m,int id,Bundle o){updateWidget(c,m,id);}
+    @Override public void onReceive(Context c,Intent i){
+        super.onReceive(c,i);String a=i.getAction();
+        if(Intent.ACTION_DATE_CHANGED.equals(a)||Intent.ACTION_TIME_CHANGED.equals(a)||Intent.ACTION_TIMEZONE_CHANGED.equals(a)||Intent.ACTION_LOCALE_CHANGED.equals(a)){
+            AppWidgetManager m=AppWidgetManager.getInstance(c);
+            for(int id:m.getAppWidgetIds(new ComponentName(c,CombinedWidgetProvider.class)))updateWidget(c,m,id);
         }
     }
-
-    @Override
-    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
-                                          int appWidgetId, Bundle newOptions) {
-        updateWidget(context, appWidgetManager, appWidgetId);
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-        String action = intent.getAction();
-        if (Intent.ACTION_DATE_CHANGED.equals(action)
-                || Intent.ACTION_TIME_CHANGED.equals(action)
-                || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
-                || Intent.ACTION_LOCALE_CHANGED.equals(action)) {
-            AppWidgetManager manager = AppWidgetManager.getInstance(context);
-            ComponentName provider = new ComponentName(context, CombinedWidgetProvider.class);
-            for (int id : manager.getAppWidgetIds(provider)) {
-                updateWidget(context, manager, id);
-            }
-        }
-    }
-
-    public static void updateWidget(Context context, AppWidgetManager manager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_combined);
-
-        Locale hijriLocale = Locale.forLanguageTag("ar-SA-u-ca-islamic-umalqura");
-        SimpleDateFormat hijriFormat = new SimpleDateFormat("d MMMM yyyy 'هـ'", hijriLocale);
-        views.setTextViewText(R.id.combinedHijriDate, hijriFormat.format(new Date()));
-
-        PrayerTimesCalculator.Times t = PrayerTimesCalculator.calculateToday();
-        views.setTextViewText(R.id.combinedFajrTime, t.fajr);
-        views.setTextViewText(R.id.combinedSunriseTime, t.sunrise);
-        views.setTextViewText(R.id.combinedDhuhrTime, t.dhuhr);
-        views.setTextViewText(R.id.combinedAsrTime, t.asr);
-        views.setTextViewText(R.id.combinedMaghribTime, t.maghrib);
-        views.setTextViewText(R.id.combinedIshaTime, t.isha);
-
-        WidgetStyle.applyBackgroundAndWatermark(
-                context, views, R.id.combinedRoot, R.id.combinedThemeMark);
-
-        int color = WidgetStyle.getTextColor(context);
-        int secondary = WidgetStyle.withAlpha(color, 210);
-        float scale = WidgetStyle.getFontScale(context);
-
-        views.setTextColor(R.id.combinedGregorianDate, color);
-        views.setTextColor(R.id.combinedHijriDate, color);
-        views.setTextColor(R.id.combinedLocation, secondary);
-        views.setTextColor(R.id.combinedCurrentTime, secondary);
-
-        views.setTextViewTextSize(
-                R.id.combinedGregorianDate, TypedValue.COMPLEX_UNIT_SP, 18f * scale);
-        views.setTextViewTextSize(
-                R.id.combinedHijriDate, TypedValue.COMPLEX_UNIT_SP, 18f * scale);
-        views.setTextViewTextSize(
-                R.id.combinedLocation, TypedValue.COMPLEX_UNIT_SP, 15f * scale);
-        views.setTextViewTextSize(
-                R.id.combinedCurrentTime, TypedValue.COMPLEX_UNIT_SP, 15f * scale);
-
-        WidgetStyle.applyClockFormat(context, views, R.id.combinedCurrentTime);
-
-        int[] labels = {
-                R.id.combinedFajrLabel, R.id.combinedSunriseLabel, R.id.combinedDhuhrLabel,
-                R.id.combinedAsrLabel, R.id.combinedMaghribLabel, R.id.combinedIshaLabel
-        };
-        int[] times = {
-                R.id.combinedFajrTime, R.id.combinedSunriseTime, R.id.combinedDhuhrTime,
-                R.id.combinedAsrTime, R.id.combinedMaghribTime, R.id.combinedIshaTime
-        };
-
-        for (int id : labels) {
-            views.setTextColor(id, color);
-            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, 14f * scale);
-        }
-        for (int id : times) {
-            views.setTextColor(id, color);
-            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, 16f * scale);
-        }
-
-        Intent openApp = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context, 300, openApp,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        views.setOnClickPendingIntent(R.id.combinedRoot, pendingIntent);
-
-        manager.updateAppWidget(appWidgetId, views);
+    public static void updateWidget(Context c,AppWidgetManager m,int id){
+        RemoteViews v=new RemoteViews(c.getPackageName(),R.layout.widget_combined);
+        SimpleDateFormat hf=new SimpleDateFormat("d MMMM yyyy 'هـ'",Locale.forLanguageTag("ar-SA-u-ca-islamic-umalqura"));
+        v.setTextViewText(R.id.combinedHijriDate,hf.format(new Date()));
+        PrayerTimesCalculator.Times t=PrayerTimesCalculator.calculateToday();
+        int[] tids={R.id.combinedFajrTime,R.id.combinedSunriseTime,R.id.combinedDhuhrTime,R.id.combinedAsrTime,R.id.combinedMaghribTime,R.id.combinedIshaTime};
+        String[] tv={t.fajr,t.sunrise,t.dhuhr,t.asr,t.maghrib,t.isha};
+        for(int x=0;x<tids.length;x++)v.setTextViewText(tids[x],WidgetStyle.formatPrayerTime(c,tv[x]));
+        WidgetStyle.applyBackgroundAndWatermark(c,v,R.id.combinedRoot,R.id.combinedThemeMark);
+        int color=WidgetStyle.getTextColor(c),secondary=WidgetStyle.withAlpha(color,210);float s=WidgetStyle.getFontScale(c);
+        v.setTextColor(R.id.combinedGregorianDate,color);v.setTextColor(R.id.combinedHijriDate,color);
+        v.setTextColor(R.id.combinedLocation,secondary);v.setTextColor(R.id.combinedCurrentTime12,secondary);v.setTextColor(R.id.combinedCurrentTime24,secondary);
+        v.setTextViewTextSize(R.id.combinedGregorianDate,TypedValue.COMPLEX_UNIT_SP,18*s);
+        v.setTextViewTextSize(R.id.combinedHijriDate,TypedValue.COMPLEX_UNIT_SP,18*s);
+        v.setTextViewTextSize(R.id.combinedLocation,TypedValue.COMPLEX_UNIT_SP,15*s);
+        v.setTextViewTextSize(R.id.combinedCurrentTime12,TypedValue.COMPLEX_UNIT_SP,15*s);
+        v.setTextViewTextSize(R.id.combinedCurrentTime24,TypedValue.COMPLEX_UNIT_SP,15*s);
+        boolean h24=WidgetStyle.use24Hour(c);v.setViewVisibility(R.id.combinedCurrentTime12,h24?View.GONE:View.VISIBLE);v.setViewVisibility(R.id.combinedCurrentTime24,h24?View.VISIBLE:View.GONE);
+        int[] labels={R.id.combinedFajrLabel,R.id.combinedSunriseLabel,R.id.combinedDhuhrLabel,R.id.combinedAsrLabel,R.id.combinedMaghribLabel,R.id.combinedIshaLabel};
+        for(int x:labels){v.setTextColor(x,color);v.setTextViewTextSize(x,TypedValue.COMPLEX_UNIT_SP,14*s);}
+        for(int x:tids){v.setTextColor(x,color);v.setTextViewTextSize(x,TypedValue.COMPLEX_UNIT_SP,16*s);}
+        PendingIntent p=PendingIntent.getActivity(c,300,new Intent(c,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
+        v.setOnClickPendingIntent(R.id.combinedRoot,p);m.updateAppWidget(id,v);
     }
 }

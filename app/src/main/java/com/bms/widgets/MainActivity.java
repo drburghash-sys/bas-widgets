@@ -10,158 +10,187 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-
     private static final String PREFS = "bms_widget_prefs";
     private SharedPreferences prefs;
     private SeekBar fontSize;
-    private Spinner colorSpinner;
-    private Spinner themeSpinner;
-    private Spinner clockSpinner;
+    private Spinner colorSpinner, themeSpinner, clockSpinner;
+    private Spinner clockWidgetTypeSpinner, analogStyleSpinner, digitalStyleSpinner, clockLogoSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
 
+        ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
+        scroll.setBackgroundColor(0xFF101318);
+
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER_HORIZONTAL);
-        root.setPadding(dp(22), dp(28), dp(22), dp(28));
-        root.setBackgroundColor(0xFF101318);
+        root.setPadding(dp(22), dp(28), dp(22), dp(36));
+        scroll.addView(root, new ScrollView.LayoutParams(
+                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
 
         TextView title = text("BMS Widgets", 28, 0xFFFFFFFF);
         title.setGravity(Gravity.CENTER);
         root.addView(title, fullWrap(0, 6));
 
-        TextView subtitle = text("إعدادات الويدجت", 18, 0xFFC7CED8);
+        TextView subtitle = text("إعدادات التاريخ والصلاة", 18, 0xFFC7CED8);
         subtitle.setGravity(Gravity.CENTER);
         root.addView(subtitle, fullWrap(0, 22));
 
         root.addView(section("حجم الخط"), fullWrap(0, 4));
-
         fontSize = new SeekBar(this);
         fontSize.setMax(80);
         int savedPercent = prefs.getInt("font_percent", 100);
         fontSize.setProgress(Math.max(0, Math.min(80, savedPercent - 70)));
         root.addView(fontSize, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        root.addView(text("70%                                      150%", 12, 0xFF8F98A5), fullWrap(0, 16));
 
-        TextView sizeHint = text("70%                                      150%", 12, 0xFF8F98A5);
-        root.addView(sizeHint, fullWrap(0, 16));
-
-        TextView unifiedHint = text(
-                "حجم الخط يطبّق معًا على التاريخ والهجري والميلادي وأوقات الصلاة.",
-                13, 0xFF9DA6B2);
-        unifiedHint.setGravity(Gravity.RIGHT);
-        root.addView(unifiedHint, fullWrap(0, 14));
-
-        root.addView(section("نظام الساعة"), fullWrap(0, 6));
-        clockSpinner = new Spinner(this);
-        String[] clockModes = {"12 ساعة", "24 ساعة"};
-        clockSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, clockModes));
-        clockSpinner.setSelection(prefs.getInt("clock_format_index", 0));
+        root.addView(section("نظام الوقت"), fullWrap(0, 6));
+        clockSpinner = spinner(new String[]{"12 ساعة", "24 ساعة"}, prefs.getInt("clock_format_index", 0));
         root.addView(clockSpinner, fullWrap(0, 18));
 
         root.addView(section("لون الخط"), fullWrap(0, 6));
-        colorSpinner = new Spinner(this);
-        String[] colors = {"أبيض", "كريمي", "أزرق فاتح", "أخضر فاتح", "ذهبي", "أحمر فاتح"};
-        colorSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, colors));
-        colorSpinner.setSelection(prefs.getInt("text_color_index", 0));
+        colorSpinner = spinner(new String[]{"أبيض", "كريمي", "أزرق فاتح", "أخضر فاتح", "ذهبي", "أحمر فاتح"},
+                prefs.getInt("text_color_index", 0));
         root.addView(colorSpinner, fullWrap(0, 18));
 
         root.addView(section("الخلفية"), fullWrap(0, 6));
-        themeSpinner = new Spinner(this);
-        String[] themes = {
-                "داكنة",
-                "شفافة",
-                "ليفربول — أحمر وأبيض",
-                "النصر",
-                "السعودية — أخضر وأبيض"
-        };
-        themeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, themes));
-        themeSpinner.setSelection(prefs.getInt("theme_index", 0));
-        root.addView(themeSpinner, fullWrap(0, 10));
+        themeSpinner = spinner(new String[]{"داكنة", "شفافة", "ليفربول — أحمر", "النصر", "السعودية — أخضر"},
+                prefs.getInt("theme_index", 0));
+        root.addView(themeSpinner, fullWrap(0, 20));
 
-        TextView backgroundHint = text(
-                "الخلفيات تتكيف تلقائيًا مع تمديد الويدجت عرضًا وطولًا بدون تغيير حجم النص.",
-                13, 0xFF9DA6B2);
-        backgroundHint.setGravity(Gravity.RIGHT);
-        root.addView(backgroundHint, fullWrap(0, 20));
-
-        Button save = new Button(this);
-        save.setText("حفظ وتطبيق على كل الويدجت");
-        save.setAllCaps(false);
-        save.setTextSize(17);
+        Button save = button("حفظ إعدادات التاريخ والصلاة");
         save.setOnClickListener(v -> saveAndApply());
-        root.addView(save, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(54)));
+        root.addView(save, fullButton(0));
 
-        Button addCombined = new Button(this);
-        addCombined.setText("إضافة ويدجت التاريخ + الصلاة");
-        addCombined.setAllCaps(false);
+        Button addCombined = button("إضافة ويدجت التاريخ + الصلاة");
         addCombined.setOnClickListener(v -> pinWidget(CombinedWidgetProvider.class));
-        LinearLayout.LayoutParams combinedParams = fullWrap(14, 0);
-        combinedParams.height = dp(52);
-        root.addView(addCombined, combinedParams);
+        root.addView(addCombined, fullButton(14));
 
-        Button addDate = new Button(this);
-        addDate.setText("إضافة ويدجت التاريخ فقط");
-        addDate.setAllCaps(false);
+        Button addDate = button("إضافة ويدجت التاريخ فقط");
         addDate.setOnClickListener(v -> pinWidget(DateTimeWidgetProvider.class));
-        LinearLayout.LayoutParams addDateParams = fullWrap(8, 0);
-        addDateParams.height = dp(48);
-        root.addView(addDate, addDateParams);
+        root.addView(addDate, fullButton(8));
 
-        Button addPrayer = new Button(this);
-        addPrayer.setText("إضافة ويدجت الصلاة فقط");
-        addPrayer.setAllCaps(false);
+        Button addPrayer = button("إضافة ويدجت الصلاة فقط");
         addPrayer.setOnClickListener(v -> pinWidget(PrayerTimesWidgetProvider.class));
-        LinearLayout.LayoutParams addPrayerParams = fullWrap(8, 0);
-        addPrayerParams.height = dp(48);
-        root.addView(addPrayer, addPrayerParams);
+        root.addView(addPrayer, fullButton(8));
 
-        TextView note = text(
-                "يمكن تغيير حجم كل ويدجت من الشاشة الرئيسية، وتبقى النصوص مستقلة عن أبعاد الخلفية.",
-                13, 0xFF8F98A5);
+        TextView clockTitle = text("ويدجت الساعة المستقلة", 21, 0xFFFFFFFF);
+        clockTitle.setGravity(Gravity.CENTER);
+        root.addView(clockTitle, fullWrap(28, 14));
+
+        root.addView(section("نوع الساعة"), fullWrap(0, 6));
+        clockWidgetTypeSpinner = spinner(new String[]{"عقارب", "رقمية"}, prefs.getInt("clock_widget_type", 0));
+        root.addView(clockWidgetTypeSpinner, fullWrap(0, 16));
+
+        root.addView(section("تصميم العقارب — 15 شكل"), fullWrap(0, 6));
+        analogStyleSpinner = spinner(new String[]{
+                "01 كلاسيكي بالأرقام","02 أبيض بسيط بلا أرقام","03 ليفربول بالأرقام",
+                "04 سعودي بلا أرقام","05 النصر بالأرقام","06 ليلي بلا أرقام",
+                "07 ذهبي روماني","08 برونزي بلا أرقام","09 عاجي بالأرقام",
+                "10 زمردي بلا أرقام","11 رياضي بالأرقام","12 أزرق ملكي بلا أرقام",
+                "13 كربوني روماني","14 بنفسجي بلا أرقام","15 زجاجي بالأرقام"
+        }, prefs.getInt("analog_style_index", 0));
+        root.addView(analogStyleSpinner, fullWrap(0, 16));
+
+        root.addView(section("تصميم الرقمي — 15 شكل"), fullWrap(0, 6));
+        digitalStyleSpinner = spinner(new String[]{
+                "01 أسود أبيض","02 أبيض أسود","03 ليفربول","04 سعودي","05 النصر",
+                "06 أزرق ليلي","07 ذهبي","08 برونزي","09 عاجي","10 زمردي",
+                "11 أحمر رياضي","12 أزرق ملكي","13 كربوني","14 بنفسجي","15 زجاجي"
+        }, prefs.getInt("digital_style_index", 0));
+        root.addView(digitalStyleSpinner, fullWrap(0, 16));
+
+        root.addView(section("الشعار في الساعة"), fullWrap(0, 6));
+        clockLogoSpinner = spinner(new String[]{"بدون شعار", "ليفربول", "النصر", "السعودية"},
+                prefs.getInt("clock_logo_index", 0));
+        root.addView(clockLogoSpinner, fullWrap(0, 18));
+
+        Button saveClock = button("حفظ شكل الساعة");
+        saveClock.setOnClickListener(v -> saveClockAndApply());
+        root.addView(saveClock, fullButton(0));
+
+        Button addClock = button("إضافة ويدجت الساعة");
+        addClock.setOnClickListener(v -> pinWidget(ClockWidgetProvider.class));
+        root.addView(addClock, fullButton(10));
+
+        TextView note = text("أشكال العقارب تشمل تصاميم بأرقام وبدون أرقام، والشعار قابل للتبديل.", 13, 0xFF8F98A5);
         note.setGravity(Gravity.CENTER);
         root.addView(note, fullWrap(16, 0));
 
-        setContentView(root);
+        setContentView(scroll);
+    }
+
+    private Spinner spinner(String[] items, int selection) {
+        Spinner s = new Spinner(this);
+        s.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items));
+        s.setSelection(Math.max(0, Math.min(items.length - 1, selection)));
+        return s;
+    }
+
+    private Button button(String label) {
+        Button b = new Button(this);
+        b.setText(label);
+        b.setAllCaps(false);
+        b.setTextSize(17);
+        return b;
+    }
+
+    private LinearLayout.LayoutParams fullButton(int top) {
+        LinearLayout.LayoutParams p = fullWrap(top, 0);
+        p.height = dp(52);
+        return p;
     }
 
     private void saveAndApply() {
-        int fontPercent = fontSize.getProgress() + 70;
         prefs.edit()
-                .putInt("font_percent", fontPercent)
+                .putInt("font_percent", fontSize.getProgress() + 70)
                 .putInt("clock_format_index", clockSpinner.getSelectedItemPosition())
                 .putInt("text_color_index", colorSpinner.getSelectedItemPosition())
                 .putInt("theme_index", themeSpinner.getSelectedItemPosition())
                 .apply();
 
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        updateAll(manager, DateTimeWidgetProvider.class, 1);
+        updateAll(manager, PrayerTimesWidgetProvider.class, 2);
+        updateAll(manager, CombinedWidgetProvider.class, 3);
+        updateAll(manager, ClockWidgetProvider.class, 4);
+        Toast.makeText(this, "تم تطبيق إعدادات الوقت والتاريخ والصلاة", Toast.LENGTH_SHORT).show();
+    }
 
-        ComponentName dateProvider = new ComponentName(this, DateTimeWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(dateProvider)) {
-            DateTimeWidgetProvider.updateWidget(this, manager, id);
+    private void saveClockAndApply() {
+        prefs.edit()
+                .putInt("clock_widget_type", clockWidgetTypeSpinner.getSelectedItemPosition())
+                .putInt("analog_style_index", analogStyleSpinner.getSelectedItemPosition())
+                .putInt("digital_style_index", digitalStyleSpinner.getSelectedItemPosition())
+                .putInt("clock_logo_index", clockLogoSpinner.getSelectedItemPosition())
+                .apply();
+
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        ComponentName provider = new ComponentName(this, ClockWidgetProvider.class);
+        for (int id : manager.getAppWidgetIds(provider)) ClockWidgetProvider.updateWidget(this, manager, id);
+        Toast.makeText(this, "تم تطبيق شكل الساعة", Toast.LENGTH_SHORT).show();
+    }
+
+    private void updateAll(AppWidgetManager manager, Class<?> cls, int type) {
+        ComponentName provider = new ComponentName(this, cls);
+        for (int id : manager.getAppWidgetIds(provider)) {
+            if (type == 1) DateTimeWidgetProvider.updateWidget(this, manager, id);
+            else if (type == 2) PrayerTimesWidgetProvider.updateWidget(this, manager, id);
+            else if (type == 3) CombinedWidgetProvider.updateWidget(this, manager, id);
+            else ClockWidgetProvider.updateWidget(this, manager, id);
         }
-
-        ComponentName prayerProvider = new ComponentName(this, PrayerTimesWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(prayerProvider)) {
-            PrayerTimesWidgetProvider.updateWidget(this, manager, id);
-        }
-
-        ComponentName combinedProvider = new ComponentName(this, CombinedWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(combinedProvider)) {
-            CombinedWidgetProvider.updateWidget(this, manager, id);
-        }
-
-        Toast.makeText(this, "تم تطبيق الإعدادات على كل الويدجت", Toast.LENGTH_SHORT).show();
     }
 
     private void pinWidget(Class<?> providerClass) {
@@ -192,8 +221,7 @@ public class MainActivity extends Activity {
 
     private LinearLayout.LayoutParams fullWrap(int top, int bottom) {
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p.setMargins(0, dp(top), 0, dp(bottom));
         return p;
     }

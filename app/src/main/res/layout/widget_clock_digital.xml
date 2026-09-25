@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/clockDigitalRoot" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/clock_digital_bg_01" android:padding="10dp">
+<TextView android:id="@+id/clockDigitalLogo" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="top" android:gravity="center" android:text="" android:textColor="#55FFFFFF" android:textSize="18sp" android:textStyle="bold" android:singleLine="true"/>
+<TextClock android:id="@+id/clockDigitalTime12" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:format12Hour="h:mm a" android:format24Hour="h:mm a" android:textColor="#FFFFFF" android:textSize="48sp" android:textStyle="bold" android:singleLine="true"/>
+<TextClock android:id="@+id/clockDigitalTime24" android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:format12Hour="HH:mm" android:format24Hour="HH:mm" android:textColor="#FFFFFF" android:textSize="48sp" android:textStyle="bold" android:singleLine="true" android:visibility="gone"/>
+</FrameLayout>

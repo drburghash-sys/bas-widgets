@@ -11,75 +11,29 @@ import android.util.TypedValue;
 import android.widget.RemoteViews;
 
 public class PrayerTimesWidgetProvider extends AppWidgetProvider {
-
-    @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-        for (int appWidgetId : appWidgetIds) {
-            updateWidget(context, appWidgetManager, appWidgetId);
+    @Override public void onUpdate(Context c,AppWidgetManager m,int[] ids){for(int id:ids)updateWidget(c,m,id);}
+    @Override public void onAppWidgetOptionsChanged(Context c,AppWidgetManager m,int id,Bundle o){updateWidget(c,m,id);}
+    @Override public void onReceive(Context c,Intent i){
+        super.onReceive(c,i); String a=i.getAction();
+        if(Intent.ACTION_DATE_CHANGED.equals(a)||Intent.ACTION_TIME_CHANGED.equals(a)||Intent.ACTION_TIMEZONE_CHANGED.equals(a)||Intent.ACTION_LOCALE_CHANGED.equals(a)){
+            AppWidgetManager m=AppWidgetManager.getInstance(c);
+            for(int id:m.getAppWidgetIds(new ComponentName(c,PrayerTimesWidgetProvider.class)))updateWidget(c,m,id);
         }
     }
-
-    @Override
-    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
-                                          int appWidgetId, Bundle newOptions) {
-        updateWidget(context, appWidgetManager, appWidgetId);
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        super.onReceive(context, intent);
-        String action = intent.getAction();
-        if (Intent.ACTION_DATE_CHANGED.equals(action)
-                || Intent.ACTION_TIMEZONE_CHANGED.equals(action)
-                || Intent.ACTION_LOCALE_CHANGED.equals(action)) {
-            AppWidgetManager manager = AppWidgetManager.getInstance(context);
-            ComponentName provider = new ComponentName(context, PrayerTimesWidgetProvider.class);
-            int[] ids = manager.getAppWidgetIds(provider);
-            for (int id : ids) updateWidget(context, manager, id);
-        }
-    }
-
-    public static void updateWidget(Context context, AppWidgetManager manager, int appWidgetId) {
-        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_prayer_times);
-        PrayerTimesCalculator.Times t = PrayerTimesCalculator.calculateToday();
-
-        views.setTextViewText(R.id.fajrTime, t.fajr);
-        views.setTextViewText(R.id.sunriseTime, t.sunrise);
-        views.setTextViewText(R.id.dhuhrTime, t.dhuhr);
-        views.setTextViewText(R.id.asrTime, t.asr);
-        views.setTextViewText(R.id.maghribTime, t.maghrib);
-        views.setTextViewText(R.id.ishaTime, t.isha);
-
-        WidgetStyle.applyBackgroundAndWatermark(context, views, R.id.prayerWidgetRoot, R.id.prayerThemeMark);
-
-        int color = WidgetStyle.getTextColor(context);
-        int[] labels = {
-                R.id.fajrLabel, R.id.sunriseLabel, R.id.dhuhrLabel,
-                R.id.asrLabel, R.id.maghribLabel, R.id.ishaLabel
-        };
-        int[] times = {
-                R.id.fajrTime, R.id.sunriseTime, R.id.dhuhrTime,
-                R.id.asrTime, R.id.maghribTime, R.id.ishaTime
-        };
-
-        float scale = WidgetStyle.getFontScale(context);
-        for (int id : labels) {
-            views.setTextColor(id, color);
-            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, 14f * scale);
-        }
-        for (int id : times) {
-            views.setTextColor(id, color);
-            views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, 16f * scale);
-        }
-        views.setTextColor(R.id.prayerLocation, WidgetStyle.withAlpha(color, 195));
-        views.setTextViewTextSize(R.id.prayerLocation, TypedValue.COMPLEX_UNIT_SP, 11f * scale);
-
-        Intent openApp = new Intent(context, MainActivity.class);
-        PendingIntent pendingIntent = PendingIntent.getActivity(
-                context, 200, openApp,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        views.setOnClickPendingIntent(R.id.prayerWidgetRoot, pendingIntent);
-
-        manager.updateAppWidget(appWidgetId, views);
+    public static void updateWidget(Context c,AppWidgetManager m,int id){
+        RemoteViews v=new RemoteViews(c.getPackageName(),R.layout.widget_prayer_times);
+        PrayerTimesCalculator.Times t=PrayerTimesCalculator.calculateToday();
+        int[] ids={R.id.fajrTime,R.id.sunriseTime,R.id.dhuhrTime,R.id.asrTime,R.id.maghribTime,R.id.ishaTime};
+        String[] val={t.fajr,t.sunrise,t.dhuhr,t.asr,t.maghrib,t.isha};
+        for(int x=0;x<ids.length;x++)v.setTextViewText(ids[x],WidgetStyle.formatPrayerTime(c,val[x]));
+        WidgetStyle.applyBackgroundAndWatermark(c,v,R.id.prayerWidgetRoot,R.id.prayerThemeMark);
+        int color=WidgetStyle.getTextColor(c); float s=WidgetStyle.getFontScale(c);
+        int[] labels={R.id.fajrLabel,R.id.sunriseLabel,R.id.dhuhrLabel,R.id.asrLabel,R.id.maghribLabel,R.id.ishaLabel};
+        for(int x:labels){v.setTextColor(x,color);v.setTextViewTextSize(x,TypedValue.COMPLEX_UNIT_SP,14*s);}
+        for(int x:ids){v.setTextColor(x,color);v.setTextViewTextSize(x,TypedValue.COMPLEX_UNIT_SP,16*s);}
+        v.setTextColor(R.id.prayerLocation,WidgetStyle.withAlpha(color,195));
+        v.setTextViewTextSize(R.id.prayerLocation,TypedValue.COMPLEX_UNIT_SP,11*s);
+        PendingIntent p=PendingIntent.getActivity(c,200,new Intent(c,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
+        v.setOnClickPendingIntent(R.id.prayerWidgetRoot,p);m.updateAppWidget(id,v);
     }
 }
