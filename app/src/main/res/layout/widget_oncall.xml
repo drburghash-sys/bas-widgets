@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/oncallRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/oncallThemeMark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text=""
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:singleLine="true" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layoutDirection="rtl">
+
+            <TextView
+                android:id="@+id/oncallTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="مناوبات اليوم"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="start"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/oncallDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#D0FFFFFF"
+                android:textSize="12sp"
+                android:singleLine="true"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layoutDirection="rtl">
+
+            <TextView
+                android:id="@+id/oncallConsultantLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="الاستشاري"
+                android:textColor="#D0FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/oncallConsultant"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="—"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:gravity="start"
+                android:singleLine="true"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
+            android:baselineAligned="false"
+            android:layoutDirection="rtl">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/oncallResidentDayLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="مقيم صباح" android:textColor="#D0FFFFFF" android:textSize="11sp" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/oncallResidentDay" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="—" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/oncallResidentNightLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="مقيم ليل" android:textColor="#D0FFFFFF" android:textSize="11sp" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/oncallResidentNight" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="—" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/oncallSpecialistDayLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="أخصائي صباح" android:textColor="#D0FFFFFF" android:textSize="11sp" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/oncallSpecialistDay" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="—" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+                <TextView android:id="@+id/oncallSpecialistNightLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="أخصائي ليل" android:textColor="#D0FFFFFF" android:textSize="11sp" android:gravity="center" android:singleLine="true"/>
+                <TextView android:id="@+id/oncallSpecialistNight" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:text="—" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:gravity="center" android:singleLine="true"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/oncallTomorrow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="استشاري الغد: —"
+            android:textColor="#C8FFFFFF"
+            android:textSize="11sp"
+            android:gravity="end"
+            android:singleLine="true"/>
+
+    </LinearLayout>
+</FrameLayout>
