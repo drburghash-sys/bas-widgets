@@ -4,6 +4,6 @@
     <string name="prayer_widget_description">مواقيت الصلاة والشروق في تبوك</string>
     <string name="combined_widget_description">التاريخ الهجري والميلادي مع مواقيت الصلاة والشروق</string>
     <string name="clock_widget_description">ساعة مستقلة بعقارب أو رقمية مع تصاميم وشعارات قابلة للتبديل</string>
-    <string name="oncall_widget_description">مناوبات الجراحة العامة لليوم واستشاري الغد</string>
+    <string name="task_widget_description">أقرب ثلاث مهام يومية مع إمكانية إتمامها من سطح المكتب</string>
     <string name="bas_platform_widget_description">مرجع قديم غير ظاهر</string>
 </resources>
