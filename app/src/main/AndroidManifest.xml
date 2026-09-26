@@ -15,6 +15,8 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".TaskManagerActivity" android:exported="false"/>
+
         <receiver android:name=".DateTimeWidgetProvider" android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
@@ -58,15 +60,14 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/clock_widget_info"/>
         </receiver>
 
-        <receiver android:name=".OnCallWidgetProvider" android:exported="false">
+        <receiver android:name=".TaskWidgetProvider" android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
                 <action android:name="android.intent.action.DATE_CHANGED"/>
                 <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
-                <action android:name="android.intent.action.LOCALE_CHANGED"/>
+                <action android:name="com.bms.widgets.COMPLETE_TASK"/>
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider" android:resource="@xml/oncall_widget_info"/>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/task_widget_info"/>
         </receiver>
-
     </application>
 </manifest>
