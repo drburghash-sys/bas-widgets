@@ -45,7 +45,7 @@ public final class TaskStore {
 
         for (String line : raw.split("\n")) {
             if (line.trim().isEmpty()) continue;
-            String[] parts = line.split("\|", -1);
+            String[] parts = line.split("\\|", -1);
             if (parts.length < 4) continue;
             try {
                 String title = new String(
