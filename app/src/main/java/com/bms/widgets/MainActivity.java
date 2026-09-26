@@ -2,16 +2,14 @@ package com.bms.widgets;
 
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
-import android.content.ClipboardManager;
 import android.content.ComponentName;
-import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -25,7 +23,6 @@ public class MainActivity extends Activity {
     private SeekBar fontSize;
     private Spinner colorSpinner, themeSpinner, clockSpinner;
     private Spinner clockWidgetTypeSpinner, analogStyleSpinner, digitalStyleSpinner, clockLogoSpinner;
-    private EditText onCallInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,45 +87,23 @@ public class MainActivity extends Activity {
         addPrayer.setOnClickListener(v -> pinWidget(PrayerTimesWidgetProvider.class));
         root.addView(addPrayer, fullButton(8));
 
-        TextView onCallTitle = text("ويدجت المناوبات", 21, 0xFFFFFFFF);
-        onCallTitle.setGravity(Gravity.CENTER);
-        root.addView(onCallTitle, fullWrap(30, 10));
+        TextView tasksTitle = text("ويدجت المهام اليومية", 21, 0xFFFFFFFF);
+        tasksTitle.setGravity(Gravity.CENTER);
+        root.addView(tasksTitle, fullWrap(30, 12));
 
-        TextView onCallHelp = text(
-                "ألصق جدول المناوبات بنفس الصيغة القديمة. مثال:\n" +
-                "الشهر: 2026-09\n" +
-                "26 | مقيم صباح | مقيم ليل | أخصائي صباح | أخصائي ليل | الاستشاري",
+        TextView tasksInfo = text(
+                "تعرض أقرب 3 مهام حسب الوقت. الضغط على ✓ ينهي المهمة لليوم فقط، وتعود تلقائيًا في اليوم التالي.",
                 13, 0xFFAAB2BE);
-        onCallHelp.setGravity(Gravity.RIGHT);
-        onCallHelp.setTextDirection(View.TEXT_DIRECTION_RTL);
-        root.addView(onCallHelp, fullWrap(0, 10));
+        tasksInfo.setGravity(Gravity.CENTER);
+        root.addView(tasksInfo, fullWrap(0, 12));
 
-        onCallInput = new EditText(this);
-        onCallInput.setText(prefs.getString(OnCallSchedule.KEY_TEXT, ""));
-        onCallInput.setHint("ألصق جدول المناوبات هنا...");
-        onCallInput.setHintTextColor(0xFF7F8894);
-        onCallInput.setTextColor(0xFFFFFFFF);
-        onCallInput.setTextSize(14);
-        onCallInput.setGravity(Gravity.TOP | Gravity.RIGHT);
-        onCallInput.setTextDirection(View.TEXT_DIRECTION_RTL);
-        onCallInput.setMinLines(6);
-        onCallInput.setMaxLines(12);
-        onCallInput.setPadding(dp(12), dp(10), dp(12), dp(10));
-        onCallInput.setBackgroundColor(0xFF1B212A);
-        root.addView(onCallInput, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(190)));
+        Button manageTasks = button("إدارة المهام اليومية");
+        manageTasks.setOnClickListener(v -> startActivity(new Intent(this, TaskManagerActivity.class)));
+        root.addView(manageTasks, fullButton(0));
 
-        Button pasteRota = button("لصق من الحافظة");
-        pasteRota.setOnClickListener(v -> pasteRotaFromClipboard());
-        root.addView(pasteRota, fullButton(10));
-
-        Button saveRota = button("حفظ جدول المناوبات وتحديث الويدجت");
-        saveRota.setOnClickListener(v -> saveRota());
-        root.addView(saveRota, fullButton(8));
-
-        Button addOnCall = button("إضافة ويدجت مناوبات اليوم");
-        addOnCall.setOnClickListener(v -> pinWidget(OnCallWidgetProvider.class));
-        root.addView(addOnCall, fullButton(8));
+        Button addTasksWidget = button("إضافة ويدجت المهام");
+        addTasksWidget.setOnClickListener(v -> pinWidget(TaskWidgetProvider.class));
+        root.addView(addTasksWidget, fullButton(8));
 
         TextView clockTitle = text("ويدجت الساعة المستقلة", 21, 0xFFFFFFFF);
         clockTitle.setGravity(Gravity.CENTER);
@@ -169,45 +144,7 @@ public class MainActivity extends Activity {
         addClock.setOnClickListener(v -> pinWidget(ClockWidgetProvider.class));
         root.addView(addClock, fullButton(10));
 
-        TextView note = text(
-                "ويدجت المناوبات تعرض فريق اليوم تلقائيًا، مع استشاري الغد في الأسفل.",
-                13, 0xFF8F98A5);
-        note.setGravity(Gravity.CENTER);
-        root.addView(note, fullWrap(16, 0));
-
         setContentView(scroll);
-    }
-
-    private void pasteRotaFromClipboard() {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        if (clipboard != null && clipboard.hasPrimaryClip()
-                && clipboard.getPrimaryClip() != null
-                && clipboard.getPrimaryClip().getItemCount() > 0) {
-            CharSequence value = clipboard.getPrimaryClip().getItemAt(0).coerceToText(this);
-            if (value != null) {
-                onCallInput.setText(value.toString());
-                Toast.makeText(this, "تم اللصق", Toast.LENGTH_SHORT).show();
-                return;
-            }
-        }
-        Toast.makeText(this, "الحافظة فارغة", Toast.LENGTH_SHORT).show();
-    }
-
-    private void saveRota() {
-        String raw = onCallInput.getText().toString();
-        int count = OnCallSchedule.parse(raw).size();
-        if (count == 0) {
-            Toast.makeText(this, "لم أتعرف على أيام المناوبة. راجع تنسيق الجدول.", Toast.LENGTH_LONG).show();
-            return;
-        }
-        prefs.edit().putString(OnCallSchedule.KEY_TEXT, raw).apply();
-
-        AppWidgetManager manager = AppWidgetManager.getInstance(this);
-        ComponentName provider = new ComponentName(this, OnCallWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(provider)) {
-            OnCallWidgetProvider.updateWidget(this, manager, id);
-        }
-        Toast.makeText(this, "تم حفظ " + count + " يومًا من جدول المناوبات", Toast.LENGTH_LONG).show();
     }
 
     private Spinner spinner(String[] items, int selection) {
@@ -245,12 +182,11 @@ public class MainActivity extends Activity {
         updateAll(manager, CombinedWidgetProvider.class, 3);
         updateAll(manager, ClockWidgetProvider.class, 4);
 
-        ComponentName onCallProvider = new ComponentName(this, OnCallWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(onCallProvider)) {
-            OnCallWidgetProvider.updateWidget(this, manager, id);
-        }
+        ComponentName taskProvider = new ComponentName(this, TaskWidgetProvider.class);
+        for (int id : manager.getAppWidgetIds(taskProvider))
+            TaskWidgetProvider.updateWidget(this, manager, id);
 
-        Toast.makeText(this, "تم تطبيق إعدادات الوقت والتاريخ والصلاة", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "تم تطبيق الإعدادات", Toast.LENGTH_SHORT).show();
     }
 
     private void saveClockAndApply() {
