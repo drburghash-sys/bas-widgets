@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/taskWidgetRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:padding="12dp">
+
+    <TextView
+        android:id="@+id/taskThemeMark"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text=""
+        android:textSize="34sp"
+        android:textStyle="bold"
+        android:singleLine="true"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/taskWidgetHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layoutDirection="rtl">
+
+            <TextView
+                android:id="@+id/taskWidgetTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="مهام اليوم"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:singleLine="true"/>
+
+            <TextView
+                android:id="@+id/taskWidgetCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="متبقي 0"
+                android:textColor="#C8FFFFFF"
+                android:textSize="12sp"
+                android:singleLine="true"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/taskRow1"
+            android:layout_width="match_parent" android:layout_height="0dp"
+            android:layout_weight="1" android:orientation="horizontal"
+            android:gravity="center_vertical" android:layoutDirection="rtl">
+            <TextView android:id="@+id/taskDone1" android:layout_width="42dp" android:layout_height="42dp" android:text="✓" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:id="@+id/taskTitle1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="" android:textColor="#FFFFFF" android:textSize="15sp" android:singleLine="true"/>
+            <TextView android:id="@+id/taskTime1" android:layout_width="56dp" android:layout_height="wrap_content" android:text="" android:textColor="#C8FFFFFF" android:textSize="12sp" android:gravity="end" android:singleLine="true"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/taskRow2"
+            android:layout_width="match_parent" android:layout_height="0dp"
+            android:layout_weight="1" android:orientation="horizontal"
+            android:gravity="center_vertical" android:layoutDirection="rtl">
+            <TextView android:id="@+id/taskDone2" android:layout_width="42dp" android:layout_height="42dp" android:text="✓" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:id="@+id/taskTitle2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="" android:textColor="#FFFFFF" android:textSize="15sp" android:singleLine="true"/>
+            <TextView android:id="@+id/taskTime2" android:layout_width="56dp" android:layout_height="wrap_content" android:text="" android:textColor="#C8FFFFFF" android:textSize="12sp" android:gravity="end" android:singleLine="true"/>
+        </LinearLayout>
+
+        <LinearLayout android:id="@+id/taskRow3"
+            android:layout_width="match_parent" android:layout_height="0dp"
+            android:layout_weight="1" android:orientation="horizontal"
+            android:gravity="center_vertical" android:layoutDirection="rtl">
+            <TextView android:id="@+id/taskDone3" android:layout_width="42dp" android:layout_height="42dp" android:text="✓" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="center"/>
+            <TextView android:id="@+id/taskTitle3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="" android:textColor="#FFFFFF" android:textSize="15sp" android:singleLine="true"/>
+            <TextView android:id="@+id/taskTime3" android:layout_width="56dp" android:layout_height="wrap_content" android:text="" android:textColor="#C8FFFFFF" android:textSize="12sp" android:gravity="end" android:singleLine="true"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</FrameLayout>
