@@ -1,0 +1,27 @@
+name: Build BABYMONSTER Icon Pack APK
+on:
+  push:
+    branches: [ "babymonster-icon-pack-test" ]
+    paths:
+      - "babymonster-icon-pack/**"
+      - ".github/workflows/build-babymonster-icons.yml"
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Build APK
+        working-directory: babymonster-icon-pack
+        run: gradle :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BAS-BABYMONSTER-Icons-Test
+          path: babymonster-icon-pack/app/build/outputs/apk/debug/app-debug.apk
