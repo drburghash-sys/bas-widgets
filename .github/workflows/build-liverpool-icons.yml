@@ -1,0 +1,29 @@
+name: Build Liverpool Icon Pack APK
+on:
+  push:
+    branches: [ "liverpool-icon-pack-test" ]
+    paths:
+      - "liverpool-icon-pack/**"
+      - ".github/workflows/build-liverpool-icons.yml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+      - name: Build APK
+        working-directory: liverpool-icon-pack
+        run: gradle :app:assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BAS-Liverpool-Icons-Test
+          path: liverpool-icon-pack/app/build/outputs/apk/debug/app-debug.apk
