@@ -19,4 +19,27 @@
 <item component="ComponentInfo{com.snapchat.android/.LandingPageActivity}" drawable="snapchat"/>
 <item component="ComponentInfo{com.openai.chatgpt/com.openai.chatgpt.MainActivity}" drawable="chatgpt"/>
 <item component="ComponentInfo{com.openai.chatgpt/.MainActivity}" drawable="chatgpt"/>
+
+<item component="ComponentInfo{com.sec.android.gallery3d/.app.activity.GalleryActivity}" drawable="gallery"/>
+<item component="ComponentInfo{com.sec.android.gallery3d/com.samsung.android.gallery.app.activity.GalleryActivity}" drawable="gallery"/>
+<item component="ComponentInfo{com.google.android.apps.photos/.home.HomeActivity}" drawable="gallery"/>
+<item component="ComponentInfo{com.sec.android.app.camera/.Camera}" drawable="camera"/>
+<item component="ComponentInfo{com.sec.android.app.camera/com.sec.android.app.camera.Camera}" drawable="camera"/>
+<item component="ComponentInfo{com.motorola.camera3/.Camera}" drawable="camera"/>
+<item component="ComponentInfo{com.google.android.GoogleCamera/com.android.camera.CameraLauncher}" drawable="camera"/>
+<item component="ComponentInfo{com.sec.android.app.myfiles/.external.ui.MainActivity}" drawable="myfiles"/>
+<item component="ComponentInfo{com.google.android.apps.nbu.files/.home.HomeActivity}" drawable="myfiles"/>
+<item component="ComponentInfo{com.samsung.android.app.notes/.activity.MainActivity}" drawable="notes"/>
+<item component="ComponentInfo{com.google.android.keep/.activities.BrowseActivity}" drawable="notes"/>
+<item component="ComponentInfo{com.android.settings/.Settings}" drawable="settings"/>
+<item component="ComponentInfo{com.samsung.android.messaging/.ui.view.main.WithActivity}" drawable="messages"/>
+<item component="ComponentInfo{com.google.android.apps.messaging/.ui.ConversationListActivity}" drawable="messages"/>
+<item component="ComponentInfo{com.samsung.android.calendar/.calendar.MainActivity}" drawable="calendar"/>
+<item component="ComponentInfo{com.google.android.calendar/.AllInOneActivity}" drawable="calendar"/>
+<item component="ComponentInfo{com.sec.android.app.clockpackage/.ClockPackage}" drawable="clock"/>
+<item component="ComponentInfo{com.google.android.deskclock/.DeskClock}" drawable="clock"/>
+<item component="ComponentInfo{com.sec.android.app.popupcalculator/.Calculator}" drawable="calculator"/>
+<item component="ComponentInfo{com.google.android.calculator/.Calculator}" drawable="calculator"/>
+<item component="ComponentInfo{com.android.vending/.AssetBrowserActivity}" drawable="playstore"/>
+<item component="ComponentInfo{com.android.vending/com.google.android.finsky.activities.MainActivity}" drawable="playstore"/>
 </resources>
