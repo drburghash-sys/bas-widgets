@@ -2,4 +2,6 @@
 <resources>
 <item drawable="phone"/><item drawable="whatsapp"/><item drawable="chrome"/><item drawable="youtube"/><item drawable="gmail"/>
 <item drawable="maps"/><item drawable="instagram"/><item drawable="tiktok"/><item drawable="snapchat"/><item drawable="chatgpt"/>
+<item drawable="gallery"/><item drawable="camera"/><item drawable="myfiles"/><item drawable="notes"/><item drawable="settings"/>
+<item drawable="messages"/><item drawable="calendar"/><item drawable="clock"/><item drawable="calculator"/><item drawable="playstore"/>
 </resources>
