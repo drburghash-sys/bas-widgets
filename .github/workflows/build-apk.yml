@@ -53,3 +53,19 @@ jobs:
         with:
           name: Home-Organizer-Widget-unsigned
           path: integrated/home/build/outputs/apk/release/home-release-unsigned.apk
+
+      - name: Prepare Android signing tools
+        shell: bash
+        run: |
+          BT="$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)"
+          mkdir -p /tmp/android-signing-tools/lib
+          cp "$BT/apksigner" /tmp/android-signing-tools/
+          cp "$BT/zipalign" /tmp/android-signing-tools/
+          cp "$BT/lib/apksigner.jar" /tmp/android-signing-tools/lib/
+          chmod +x /tmp/android-signing-tools/apksigner /tmp/android-signing-tools/zipalign
+          echo "$BT" > /tmp/android-signing-tools/build-tools-version.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Home-Organizer-signing-tools
+          path: /tmp/android-signing-tools/
