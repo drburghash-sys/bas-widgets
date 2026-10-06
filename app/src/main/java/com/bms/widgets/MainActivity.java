@@ -99,7 +99,7 @@ public class MainActivity extends Activity {
 
         Button manageTasks = button("فتح مفكرتي للمزامنة");
         manageTasks.setOnClickListener(v -> {
-            Intent launch = getPackageManager().getLaunchIntentForPackage("com.drburghash.bmsblank");
+            Intent launch = getPackageManager().getLaunchIntentForPackage("com.drburghash.homehubx");
             if (launch != null) startActivity(launch);
             else Toast.makeText(this, "Home Organizer غير مثبت", Toast.LENGTH_LONG).show();
         });
