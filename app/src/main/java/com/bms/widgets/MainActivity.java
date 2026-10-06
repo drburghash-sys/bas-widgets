@@ -92,12 +92,12 @@ public class MainActivity extends Activity {
         root.addView(tasksTitle, fullWrap(30, 12));
 
         TextView tasksInfo = text(
-                "يعرض مهام اليوم والمهام المتأخرة من «مفكرتي». بعد تثبيت تحديث Home Organizer افتح «مفكرتي» مرة واحدة للمزامنة.",
+                "يعرض مهام اليوم والمهام المتأخرة من «مفكرتي» المخزنة داخل BMS Blank. افتح BMS ثم «مفكرتي» واضغط «تحديث ويدجت BAS».",
                 13, 0xFFAAB2BE);
         tasksInfo.setGravity(Gravity.CENTER);
         root.addView(tasksInfo, fullWrap(0, 12));
 
-        Button manageTasks = button("فتح مفكرتي للمزامنة");
+        Button manageTasks = button("فتح BMS ثم مفكرتي");
         manageTasks.setOnClickListener(v -> {
             Intent launch = new Intent();
             launch.setClassName(

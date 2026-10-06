@@ -66,7 +66,7 @@ public class TaskWidgetProvider extends AppWidgetProvider {
             v.setTextViewText(R.id.taskWidgetCount, "بانتظار المزامنة");
             v.setTextViewText(R.id.taskTodayHeader, "اليوم");
             v.setTextViewText(R.id.taskLateHeader, "المتأخرة");
-            v.setTextViewText(R.id.taskSyncHint, "افتح «مفكرتي» مرة واحدة لتظهر المهام هنا");
+            v.setTextViewText(R.id.taskSyncHint, "افتح BMS → مفكرتي → تحديث ويدجت BAS");
             v.setViewVisibility(R.id.taskSyncHint, View.VISIBLE);
             hideRows(v, TODAY_ROWS);
             hideRows(v, LATE_ROWS);
