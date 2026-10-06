@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/calendarRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layoutDirection="rtl"
+    android:background="@drawable/calendar_bg_dark"
+    android:padding="8dp">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="36dp" android:orientation="horizontal" android:gravity="center_vertical" android:layoutDirection="rtl">
+        <TextView android:id="@+id/calTitle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center_vertical|start" android:text="" android:textColor="#FFFFFF" android:textSize="17sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calToggle" android:layout_width="64dp" android:layout_height="34dp" android:gravity="center" android:text="هـ ⇄ م" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" android:background="@drawable/calendar_button"/>
+    </LinearLayout>
+
+    <TextView android:id="@+id/calSubtitle" android:layout_width="match_parent" android:layout_height="18dp" android:gravity="start|center_vertical" android:text="" android:textColor="#D6C4F0" android:textSize="11sp"/>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="22dp" android:orientation="horizontal" android:layoutDirection="rtl">
+        <TextView android:id="@+id/calDow1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="أحد" android:textColor="#AFFFFFFF" android:textSize="10sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calDow2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="إثنين" android:textColor="#AFFFFFFF" android:textSize="10sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calDow3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="ثلاثاء" android:textColor="#AFFFFFFF" android:textSize="10sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calDow4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="أربعاء" android:textColor="#AFFFFFFF" android:textSize="10sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calDow5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="خميس" android:textColor="#AFFFFFFF" android:textSize="10sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calDow6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="جمعة" android:textColor="#FFD477" android:textSize="10sp" android:textStyle="bold"/>
+        <TextView android:id="@+id/calDow7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center" android:text="سبت" android:textColor="#AFFFFFFF" android:textSize="10sp" android:textStyle="bold"/>
+    </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="30dp" android:orientation="horizontal" android:layoutDirection="rtl">
+            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary1" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary1" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary2" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary2" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary3" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary3" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary4" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary4" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary5" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary5" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary6" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary6" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary7" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary7" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="30dp" android:orientation="horizontal" android:layoutDirection="rtl">
+            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary8" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary8" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary9" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary9" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary10" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary10" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary11" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary11" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary12" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary12" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary13" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary13" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary14" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary14" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="30dp" android:orientation="horizontal" android:layoutDirection="rtl">
+            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary15" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary15" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary16" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary16" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary17" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary17" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary18" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary18" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary19" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary19" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary20" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary20" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary21" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary21" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="30dp" android:orientation="horizontal" android:layoutDirection="rtl">
+            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary22" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary22" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary23" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary23" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary24" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary24" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary25" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary25" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary26" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary26" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary27" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary27" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary28" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary28" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="30dp" android:orientation="horizontal" android:layoutDirection="rtl">
+            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary29" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary29" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary30" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary30" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary31" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary31" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary32" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary32" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary33" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary33" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary34" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary34" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary35" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary35" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="30dp" android:orientation="horizontal" android:layoutDirection="rtl">
+            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary36" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary36" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary37" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary37" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary38" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary38" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary39" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary39" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary40" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary40" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary41" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary41" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>            <LinearLayout android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                <TextView android:id="@+id/calPrimary42" android:layout_width="match_parent" android:layout_height="17dp" android:gravity="center" android:text="" android:textColor="#FFFFFF" android:textSize="13sp" android:textStyle="bold" android:singleLine="true"/>
+                <TextView android:id="@+id/calSecondary42" android:layout_width="match_parent" android:layout_height="13dp" android:gravity="center" android:text="" android:textColor="#C9B6E7" android:textSize="8sp" android:singleLine="true"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="36dp" android:orientation="horizontal" android:gravity="center" android:layoutDirection="rtl">
+        <TextView android:id="@+id/calPrev" android:layout_width="0dp" android:layout_height="34dp" android:layout_weight="1" android:gravity="center" android:text="‹ السابق" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold" android:background="@drawable/calendar_button"/>
+        <TextView android:layout_width="6dp" android:layout_height="1dp" android:text=""/>
+        <TextView android:id="@+id/calToday" android:layout_width="0dp" android:layout_height="34dp" android:layout_weight="1" android:gravity="center" android:text="اليوم" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold" android:background="@drawable/calendar_today_button"/>
+        <TextView android:layout_width="6dp" android:layout_height="1dp" android:text=""/>
+        <TextView android:id="@+id/calNext" android:layout_width="0dp" android:layout_height="34dp" android:layout_weight="1" android:gravity="center" android:text="التالي ›" android:textColor="#FFFFFF" android:textSize="11sp" android:textStyle="bold" android:background="@drawable/calendar_button"/>
+    </LinearLayout>
+</LinearLayout>
