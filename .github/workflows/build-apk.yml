@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Integrated Home Organizer Widget
 on:
   workflow_dispatch:
   push:
@@ -16,20 +16,39 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Restore stable debug signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/debug.keystore
-          key: bms-widgets-debug-keystore-v2
-      - name: Ensure stable debug signing key
+
+      - name: Reconstruct Home Organizer source
         shell: bash
         run: |
-          mkdir -p ~/.android
-          if [ ! -f ~/.android/debug.keystore ]; then
-            keytool -genkeypair -v               -keystore ~/.android/debug.keystore               -storepass android               -alias androiddebugkey               -keypass android               -dname "CN=BMS Widgets,O=BMS,C=SA"               -keyalg RSA -keysize 2048 -validity 10000
-          fi
-      - run: gradle assembleDebug
+          cat \
+            home_widget_src_parts/source_00 \
+            home_widget_src_parts/source_01 \
+            home_widget_src_parts/source_02a \
+            home_widget_src_parts/source_02b \
+            home_widget_src_parts/source_02c \
+            home_widget_src_parts/source_02d \
+            home_widget_src_parts/source_03a \
+            home_widget_src_parts/source_03b \
+            home_widget_src_parts/source_04a \
+            home_widget_src_parts/source_04b \
+            home_widget_src_parts/source_05a \
+            home_widget_src_parts/source_05b \
+            home_widget_src_parts/source_06a \
+            home_widget_src_parts/source_06b \
+            home_widget_src_parts/source_07a \
+            home_widget_src_parts/source_07b \
+            > /tmp/home_source.b64
+          base64 -d /tmp/home_source.b64 > /tmp/home_source.zip
+          echo "Expected: 8438b572afbd092c35e59d6ebfa74d7f5d8c132171efb8c8f8872f431a027209"
+          sha256sum /tmp/home_source.zip
+          echo "8438b572afbd092c35e59d6ebfa74d7f5d8c132171efb8c8f8872f431a027209  /tmp/home_source.zip" | sha256sum -c -
+          mkdir integrated
+          unzip -q /tmp/home_source.zip -d integrated
+
+      - name: Build unsigned release APK
+        run: gradle -p integrated assembleRelease
+
       - uses: actions/upload-artifact@v4
         with:
-          name: BMS-Widgets-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Home-Organizer-Widget-unsigned
+          path: integrated/home/build/outputs/apk/release/home-release-unsigned.apk
