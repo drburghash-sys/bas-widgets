@@ -36,8 +36,8 @@ jobs:
             home_widget_src_parts/source_05b \
             home_widget_src_parts/source_06a \
             home_widget_src_parts/source_06b \
-            home_widget_src_parts/source_07a \
-            home_widget_src_parts/source_07b \
+            home_widget_src_parts/source_07c \
+            home_widget_src_parts/source_07d \
             > /tmp/home_source.b64
           base64 -d /tmp/home_source.b64 > /tmp/home_source.zip
           echo "Expected: 8438b572afbd092c35e59d6ebfa74d7f5d8c132171efb8c8f8872f431a027209"
