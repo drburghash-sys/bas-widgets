@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BAS Weather</string>
+    <string name="weather_widget_description">طقس تبوك: الحالة والحرارة والرطوبة والغبار</string>
+</resources>

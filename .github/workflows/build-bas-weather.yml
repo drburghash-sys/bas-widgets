@@ -1,0 +1,33 @@
+name: Build BAS Weather
+on:
+  push:
+    branches: [ "weather-widget-extension-v1" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Build unsigned release
+        run: gradle -p bas-weather clean assembleRelease
+      - name: Align APK and collect signer
+        shell: bash
+        run: |
+          set -e
+          BT="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
+          mkdir -p out
+          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V1_unsigned_aligned.apk
+          cp "$BT/lib/apksigner.jar" out/apksigner.jar
+          "$BT/zipalign" -c -v 4 out/BAS_Weather_V1_unsigned_aligned.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BAS-Weather-V1-Unsigned
+          path: out/*
