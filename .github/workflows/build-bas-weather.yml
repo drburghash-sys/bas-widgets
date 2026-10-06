@@ -16,18 +16,36 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Build unsigned release
+
+      - name: Restore stable BAS Weather signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/bas_weather_v2.jks
+          key: bas-weather-signing-key-v2
+
+      - name: Ensure stable BAS Weather signing key
+        shell: bash
+        run: |
+          set -e
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/bas_weather_v2.jks ]; then
+            keytool -genkeypair -v               -keystore ~/.android/bas_weather_v2.jks               -storepass BASWeatherV2_2026               -keypass BASWeatherV2_2026               -alias basweather               -keyalg RSA -keysize 2048 -validity 10000               -dname "CN=BAS Weather, O=BAS, C=SA"
+          fi
+
+      - name: Build release APK
         run: gradle -p bas-weather clean assembleRelease
-      - name: Align APK and collect signer
+
+      - name: Align and sign APK
         shell: bash
         run: |
           set -e
           BT="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           mkdir -p out
-          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V2_unsigned_aligned.apk
-          cp "$BT/lib/apksigner.jar" out/apksigner.jar
-          "$BT/zipalign" -c -v 4 out/BAS_Weather_V2_unsigned_aligned.apk
+          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V2_aligned.apk
+          "$BT/apksigner" sign             --ks ~/.android/bas_weather_v2.jks             --ks-key-alias basweather             --ks-pass pass:BASWeatherV2_2026             --key-pass pass:BASWeatherV2_2026             --out out/BAS_Weather_V2.apk             out/BAS_Weather_V2_aligned.apk
+          "$BT/apksigner" verify --verbose --print-certs out/BAS_Weather_V2.apk
+
       - uses: actions/upload-artifact@v4
         with:
-          name: BAS-Weather-V2-Unsigned
-          path: out/*
+          name: BAS-Weather-V2
+          path: out/BAS_Weather_V2.apk
