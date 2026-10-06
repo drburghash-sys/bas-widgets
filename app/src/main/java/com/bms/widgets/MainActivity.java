@@ -87,21 +87,25 @@ public class MainActivity extends Activity {
         addPrayer.setOnClickListener(v -> pinWidget(PrayerTimesWidgetProvider.class));
         root.addView(addPrayer, fullButton(8));
 
-        TextView tasksTitle = text("ويدجت المهام اليومية", 21, 0xFFFFFFFF);
+        TextView tasksTitle = text("ويدجت مفكرتي", 21, 0xFFFFFFFF);
         tasksTitle.setGravity(Gravity.CENTER);
         root.addView(tasksTitle, fullWrap(30, 12));
 
         TextView tasksInfo = text(
-                "تعرض أقرب 3 مهام حسب الوقت. الضغط على ✓ ينهي المهمة لليوم فقط، وتعود تلقائيًا في اليوم التالي.",
+                "يعرض مهام اليوم والمهام المتأخرة من «مفكرتي». بعد تثبيت تحديث Home Organizer افتح «مفكرتي» مرة واحدة للمزامنة.",
                 13, 0xFFAAB2BE);
         tasksInfo.setGravity(Gravity.CENTER);
         root.addView(tasksInfo, fullWrap(0, 12));
 
-        Button manageTasks = button("إدارة المهام اليومية");
-        manageTasks.setOnClickListener(v -> startActivity(new Intent(this, TaskManagerActivity.class)));
+        Button manageTasks = button("فتح مفكرتي للمزامنة");
+        manageTasks.setOnClickListener(v -> {
+            Intent launch = getPackageManager().getLaunchIntentForPackage("com.drburghash.bmsblank");
+            if (launch != null) startActivity(launch);
+            else Toast.makeText(this, "Home Organizer غير مثبت", Toast.LENGTH_LONG).show();
+        });
         root.addView(manageTasks, fullButton(0));
 
-        Button addTasksWidget = button("إضافة ويدجت المهام");
+        Button addTasksWidget = button("إضافة ويدجت مفكرتي");
         addTasksWidget.setOnClickListener(v -> pinWidget(TaskWidgetProvider.class));
         root.addView(addTasksWidget, fullButton(8));
 
