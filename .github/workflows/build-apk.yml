@@ -21,7 +21,8 @@ jobs:
         shell: bash
         run: |
           cat \
-            home_widget_src_parts/source_00 \
+            home_widget_src_parts/source_00a \
+            home_widget_src_parts/source_00b \
             home_widget_src_parts/source_01 \
             home_widget_src_parts/source_02a \
             home_widget_src_parts/source_02b \
