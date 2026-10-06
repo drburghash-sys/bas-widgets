@@ -10,8 +10,8 @@ import android.widget.RemoteViews;
 import java.util.List;
 
 public class TaskWidgetProvider extends AppWidgetProvider {
-    private static final int[] TODAY_IDS = {R.id.today1, R.id.today2, R.id.today3};
-    private static final int[] LATE_IDS = {R.id.late1, R.id.late2, R.id.late3};
+    private static final int[] TODAY_IDS = {R.id.today1, R.id.today2, R.id.today3, R.id.today4, R.id.today5};
+    private static final int[] LATE_IDS = {R.id.late1, R.id.late2, R.id.late3, R.id.late4, R.id.late5};
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
