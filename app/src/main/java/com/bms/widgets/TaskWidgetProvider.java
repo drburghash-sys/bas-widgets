@@ -3,9 +3,9 @@ package com.bms.widgets;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
@@ -13,38 +13,30 @@ import android.widget.RemoteViews;
 import java.util.List;
 
 public class TaskWidgetProvider extends AppWidgetProvider {
-    public static final String ACTION_COMPLETE = "com.bms.widgets.COMPLETE_TASK";
-    public static final String EXTRA_TASK_ID = "task_id";
+    private static final String HOME_ORGANIZER_PACKAGE = "com.drburghash.bmsblank";
 
-    private static final int[] ROWS = {
-            R.id.taskRow1, R.id.taskRow2, R.id.taskRow3
+    private static final int[] TODAY_ROWS = {
+            R.id.taskTodayRow1, R.id.taskTodayRow2, R.id.taskTodayRow3
     };
-    private static final int[] TIMES = {
-            R.id.taskTime1, R.id.taskTime2, R.id.taskTime3
+    private static final int[] TODAY_TITLES = {
+            R.id.taskTodayTitle1, R.id.taskTodayTitle2, R.id.taskTodayTitle3
     };
-    private static final int[] TITLES = {
-            R.id.taskTitle1, R.id.taskTitle2, R.id.taskTitle3
+    private static final int[] TODAY_META = {
+            R.id.taskTodayMeta1, R.id.taskTodayMeta2, R.id.taskTodayMeta3
     };
-    private static final int[] DONE = {
-            R.id.taskDone1, R.id.taskDone2, R.id.taskDone3
+    private static final int[] LATE_ROWS = {
+            R.id.taskLateRow1, R.id.taskLateRow2, R.id.taskLateRow3
+    };
+    private static final int[] LATE_TITLES = {
+            R.id.taskLateTitle1, R.id.taskLateTitle2, R.id.taskLateTitle3
+    };
+    private static final int[] LATE_META = {
+            R.id.taskLateMeta1, R.id.taskLateMeta2, R.id.taskLateMeta3
     };
 
     @Override
     public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
         for (int id : ids) updateWidget(context, manager, id);
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent) {
-        if (ACTION_COMPLETE.equals(intent.getAction())) {
-            String taskId = intent.getStringExtra(EXTRA_TASK_ID);
-            if (taskId != null) TaskStore.completeToday(context, taskId);
-
-            AppWidgetManager manager = AppWidgetManager.getInstance(context);
-            ComponentName provider = new ComponentName(context, TaskWidgetProvider.class);
-            for (int id : manager.getAppWidgetIds(provider)) updateWidget(context, manager, id);
-        }
-        super.onReceive(context, intent);
     }
 
     public static void updateWidget(Context context, AppWidgetManager manager, int appWidgetId) {
@@ -58,48 +50,112 @@ public class TaskWidgetProvider extends AppWidgetProvider {
 
         v.setTextColor(R.id.taskWidgetTitle, color);
         v.setTextColor(R.id.taskWidgetCount, secondary);
+        v.setTextColor(R.id.taskTodayHeader, color);
+        v.setTextColor(R.id.taskLateHeader, color);
+        v.setTextColor(R.id.taskSyncHint, secondary);
         v.setTextViewTextSize(R.id.taskWidgetTitle, TypedValue.COMPLEX_UNIT_SP, 18f * scale);
         v.setTextViewTextSize(R.id.taskWidgetCount, TypedValue.COMPLEX_UNIT_SP, 12f * scale);
+        v.setTextViewTextSize(R.id.taskTodayHeader, TypedValue.COMPLEX_UNIT_SP, 13f * scale);
+        v.setTextViewTextSize(R.id.taskLateHeader, TypedValue.COMPLEX_UNIT_SP, 13f * scale);
+        v.setTextViewTextSize(R.id.taskSyncHint, TypedValue.COMPLEX_UNIT_SP, 11f * scale);
 
-        List<TaskStore.Task> pending = TaskStore.getPendingToday(context);
-        v.setTextViewText(R.id.taskWidgetCount,
-                pending.isEmpty() ? "تم إنجاز جميع مهام اليوم" :
-                        "متبقي " + pending.size());
+        PendingIntent openMofakkirati = openHomeOrganizerPendingIntent(context);
+        v.setOnClickPendingIntent(R.id.taskWidgetHeader, openMofakkirati);
 
-        for (int i = 0; i < 3; i++) {
-            if (i < pending.size()) {
-                TaskStore.Task task = pending.get(i);
-                v.setViewVisibility(ROWS[i], View.VISIBLE);
-                v.setTextViewText(TIMES[i], task.time);
-                v.setTextViewText(TITLES[i], task.title);
-                v.setTextColor(TIMES[i], secondary);
-                v.setTextColor(TITLES[i], color);
-                v.setTextColor(DONE[i], color);
-                v.setTextViewTextSize(TIMES[i], TypedValue.COMPLEX_UNIT_SP, 12f * scale);
-                v.setTextViewTextSize(TITLES[i], TypedValue.COMPLEX_UNIT_SP, 15f * scale);
-                v.setTextViewTextSize(DONE[i], TypedValue.COMPLEX_UNIT_SP, 18f * scale);
-
-                Intent complete = new Intent(context, TaskWidgetProvider.class);
-                complete.setAction(ACTION_COMPLETE);
-                complete.putExtra(EXTRA_TASK_ID, task.id);
-                PendingIntent pi = PendingIntent.getBroadcast(
-                        context,
-                        7000 + Math.abs(task.id.hashCode() % 100000),
-                        complete,
-                        PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-                v.setOnClickPendingIntent(DONE[i], pi);
-            } else {
-                v.setViewVisibility(ROWS[i], View.GONE);
-            }
+        if (!MofakkiratiStore.hasSnapshot(context)) {
+            v.setTextViewText(R.id.taskWidgetCount, "بانتظار المزامنة");
+            v.setTextViewText(R.id.taskTodayHeader, "اليوم");
+            v.setTextViewText(R.id.taskLateHeader, "المتأخرة");
+            v.setTextViewText(R.id.taskSyncHint, "افتح «مفكرتي» مرة واحدة لتظهر المهام هنا");
+            v.setViewVisibility(R.id.taskSyncHint, View.VISIBLE);
+            hideRows(v, TODAY_ROWS);
+            hideRows(v, LATE_ROWS);
+            manager.updateAppWidget(appWidgetId, v);
+            return;
         }
 
-        Intent open = new Intent(context, TaskManagerActivity.class);
-        PendingIntent openPi = PendingIntent.getActivity(
-                context, 600,
-                open,
-                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        v.setOnClickPendingIntent(R.id.taskWidgetHeader, openPi);
+        List<MofakkiratiStore.Item> today = MofakkiratiStore.today(context);
+        List<MofakkiratiStore.Item> overdue = MofakkiratiStore.overdue(context);
+
+        v.setTextViewText(R.id.taskWidgetCount,
+                "اليوم " + today.size() + "  ·  متأخر " + overdue.size());
+        v.setTextViewText(R.id.taskTodayHeader, "اليوم (" + today.size() + ")");
+        v.setTextViewText(R.id.taskLateHeader, "المتأخرة (" + overdue.size() + ")");
+        v.setViewVisibility(R.id.taskSyncHint, View.GONE);
+
+        Bundle options = manager.getAppWidgetOptions(appWidgetId);
+        int minHeight = options == null ? 220 :
+                options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 220);
+        int maxPerSection = minHeight >= 260 ? 3 : (minHeight >= 190 ? 2 : 1);
+
+        bindRows(v, today, TODAY_ROWS, TODAY_TITLES, TODAY_META,
+                maxPerSection, color, secondary, scale, true, openMofakkirati);
+        bindRows(v, overdue, LATE_ROWS, LATE_TITLES, LATE_META,
+                maxPerSection, color, secondary, scale, false, openMofakkirati);
 
         manager.updateAppWidget(appWidgetId, v);
+    }
+
+    private static void bindRows(
+            RemoteViews v,
+            List<MofakkiratiStore.Item> tasks,
+            int[] rows,
+            int[] titles,
+            int[] meta,
+            int maxVisible,
+            int color,
+            int secondary,
+            float scale,
+            boolean today,
+            PendingIntent openMofakkirati) {
+        for (int i = 0; i < rows.length; i++) {
+            if (i < tasks.size() && i < maxVisible) {
+                MofakkiratiStore.Item task = tasks.get(i);
+                v.setViewVisibility(rows[i], View.VISIBLE);
+                v.setTextViewText(titles[i], typeIcon(task.type) + " " + task.title);
+
+                String detail = today
+                        ? (task.time.isEmpty() ? typeLabel(task.type) : task.time)
+                        : task.effectiveDate() + (task.time.isEmpty() ? "" : " · " + task.time);
+
+                v.setTextViewText(meta[i], detail);
+                v.setTextColor(titles[i], color);
+                v.setTextColor(meta[i], secondary);
+                v.setTextViewTextSize(titles[i], TypedValue.COMPLEX_UNIT_SP, 14f * scale);
+                v.setTextViewTextSize(meta[i], TypedValue.COMPLEX_UNIT_SP, 11f * scale);
+                v.setOnClickPendingIntent(rows[i], openMofakkirati);
+            } else {
+                v.setViewVisibility(rows[i], View.GONE);
+            }
+        }
+    }
+
+    private static void hideRows(RemoteViews v, int[] rows) {
+        for (int id : rows) v.setViewVisibility(id, View.GONE);
+    }
+
+    private static PendingIntent openHomeOrganizerPendingIntent(Context context) {
+        Intent launch = context.getPackageManager()
+                .getLaunchIntentForPackage(HOME_ORGANIZER_PACKAGE);
+        if (launch == null) launch = new Intent(context, MainActivity.class);
+        launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        return PendingIntent.getActivity(
+                context,
+                8601,
+                launch,
+                PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+    }
+
+    private static String typeIcon(String type) {
+        if ("appointment".equals(type)) return "📅";
+        if ("followup".equals(type)) return "🔁";
+        return "✓";
+    }
+
+    private static String typeLabel(String type) {
+        if ("appointment".equals(type)) return "موعد";
+        if ("followup".equals(type)) return "متابعة";
+        return "مهمة";
     }
 }
