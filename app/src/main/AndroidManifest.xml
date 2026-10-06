@@ -17,6 +17,20 @@
 
         <activity android:name=".TaskManagerActivity" android:exported="false"/>
 
+        <activity
+            android:name=".TaskSyncActivity"
+            android:exported="true"
+            android:noHistory="true"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="baswidgets" android:host="tasks"/>
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".DateTimeWidgetProvider" android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
