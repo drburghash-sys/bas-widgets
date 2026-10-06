@@ -34,7 +34,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="مهام اليوم"
+                android:text="مفكرتي"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -44,37 +44,70 @@
                 android:id="@+id/taskWidgetCount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="متبقي 0"
+                android:text="بانتظار المزامنة"
                 android:textColor="#C8FFFFFF"
                 android:textSize="12sp"
                 android:singleLine="true"/>
         </LinearLayout>
 
-        <LinearLayout android:id="@+id/taskRow1"
-            android:layout_width="match_parent" android:layout_height="0dp"
-            android:layout_weight="1" android:orientation="horizontal"
-            android:gravity="center_vertical" android:layoutDirection="rtl">
-            <TextView android:id="@+id/taskDone1" android:layout_width="42dp" android:layout_height="42dp" android:text="✓" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:id="@+id/taskTitle1" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="" android:textColor="#FFFFFF" android:textSize="15sp" android:singleLine="true"/>
-            <TextView android:id="@+id/taskTime1" android:layout_width="56dp" android:layout_height="wrap_content" android:text="" android:textColor="#C8FFFFFF" android:textSize="12sp" android:gravity="end" android:singleLine="true"/>
+        <TextView
+            android:id="@+id/taskSyncHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:gravity="center"
+            android:text="افتح «مفكرتي» مرة واحدة لتظهر المهام هنا"
+            android:textColor="#C8FFFFFF"
+            android:textSize="11sp"/>
+
+        <TextView
+            android:id="@+id/taskTodayHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="اليوم"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:gravity="start"
+            android:layoutDirection="rtl"/>
+
+        <LinearLayout android:id="@+id/taskTodayRow1" style="@style/TaskWidgetRow">
+            <TextView android:id="@+id/taskTodayTitle1" style="@style/TaskWidgetTitle"/>
+            <TextView android:id="@+id/taskTodayMeta1" style="@style/TaskWidgetMeta"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/taskTodayRow2" style="@style/TaskWidgetRow">
+            <TextView android:id="@+id/taskTodayTitle2" style="@style/TaskWidgetTitle"/>
+            <TextView android:id="@+id/taskTodayMeta2" style="@style/TaskWidgetMeta"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/taskTodayRow3" style="@style/TaskWidgetRow">
+            <TextView android:id="@+id/taskTodayTitle3" style="@style/TaskWidgetTitle"/>
+            <TextView android:id="@+id/taskTodayMeta3" style="@style/TaskWidgetMeta"/>
         </LinearLayout>
 
-        <LinearLayout android:id="@+id/taskRow2"
-            android:layout_width="match_parent" android:layout_height="0dp"
-            android:layout_weight="1" android:orientation="horizontal"
-            android:gravity="center_vertical" android:layoutDirection="rtl">
-            <TextView android:id="@+id/taskDone2" android:layout_width="42dp" android:layout_height="42dp" android:text="✓" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:id="@+id/taskTitle2" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="" android:textColor="#FFFFFF" android:textSize="15sp" android:singleLine="true"/>
-            <TextView android:id="@+id/taskTime2" android:layout_width="56dp" android:layout_height="wrap_content" android:text="" android:textColor="#C8FFFFFF" android:textSize="12sp" android:gravity="end" android:singleLine="true"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/taskLateHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="المتأخرة"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:textSize="13sp"
+            android:gravity="start"
+            android:layoutDirection="rtl"/>
 
-        <LinearLayout android:id="@+id/taskRow3"
-            android:layout_width="match_parent" android:layout_height="0dp"
-            android:layout_weight="1" android:orientation="horizontal"
-            android:gravity="center_vertical" android:layoutDirection="rtl">
-            <TextView android:id="@+id/taskDone3" android:layout_width="42dp" android:layout_height="42dp" android:text="✓" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" android:gravity="center"/>
-            <TextView android:id="@+id/taskTitle3" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="" android:textColor="#FFFFFF" android:textSize="15sp" android:singleLine="true"/>
-            <TextView android:id="@+id/taskTime3" android:layout_width="56dp" android:layout_height="wrap_content" android:text="" android:textColor="#C8FFFFFF" android:textSize="12sp" android:gravity="end" android:singleLine="true"/>
+        <LinearLayout android:id="@+id/taskLateRow1" style="@style/TaskWidgetRow">
+            <TextView android:id="@+id/taskLateTitle1" style="@style/TaskWidgetTitle"/>
+            <TextView android:id="@+id/taskLateMeta1" style="@style/TaskWidgetMeta"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/taskLateRow2" style="@style/TaskWidgetRow">
+            <TextView android:id="@+id/taskLateTitle2" style="@style/TaskWidgetTitle"/>
+            <TextView android:id="@+id/taskLateMeta2" style="@style/TaskWidgetMeta"/>
+        </LinearLayout>
+        <LinearLayout android:id="@+id/taskLateRow3" style="@style/TaskWidgetRow">
+            <TextView android:id="@+id/taskLateTitle3" style="@style/TaskWidgetTitle"/>
+            <TextView android:id="@+id/taskLateMeta3" style="@style/TaskWidgetMeta"/>
         </LinearLayout>
 
     </LinearLayout>
