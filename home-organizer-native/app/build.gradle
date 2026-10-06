@@ -8,8 +8,8 @@ android {
         applicationId 'com.drburghash.homehubx'
         minSdk 26
         targetSdk 29
-        versionCode 102
-        versionName '4.2-widget-final'
+        versionCode 103
+        versionName '4.3-widget-5rows'
     }
 
     lint {
