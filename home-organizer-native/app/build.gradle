@@ -12,6 +12,10 @@ android {
         versionName '4.2-widget-final'
     }
 
+    lint {
+        disable 'ExpiredTargetSdkVersion'
+    }
+
     buildTypes {
         release {
             minifyEnabled false
