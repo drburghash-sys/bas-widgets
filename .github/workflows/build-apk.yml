@@ -20,7 +20,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.android/debug.keystore
-          key: bms-widgets-debug-keystore-v1
+          key: bms-widgets-debug-keystore-v2
+      - name: Ensure stable debug signing key
+        shell: bash
+        run: |
+          mkdir -p ~/.android
+          if [ ! -f ~/.android/debug.keystore ]; then
+            keytool -genkeypair -v               -keystore ~/.android/debug.keystore               -storepass android               -alias androiddebugkey               -keypass android               -dname "CN=BMS Widgets,O=BMS,C=SA"               -keyalg RSA -keysize 2048 -validity 10000
+          fi
       - run: gradle assembleDebug
       - uses: actions/upload-artifact@v4
         with:
