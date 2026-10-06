@@ -7,9 +7,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.TypedValue;
 import android.widget.RemoteViews;
 
+import java.io.InputStream;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.YearMonth;
@@ -38,10 +44,12 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
     };
 
     @Override public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
-        for (int id : ids) {
-            try { updateWidget(context, manager, id); }
-            catch (Throwable t) { showFallback(context, manager, id); }
-        }
+        for (int id : ids) safeUpdate(context, manager, id);
+    }
+
+    @Override public void onAppWidgetOptionsChanged(Context context, AppWidgetManager manager, int id, Bundle options) {
+        super.onAppWidgetOptionsChanged(context, manager, id, options);
+        safeUpdate(context, manager, id);
     }
 
     @Override public void onReceive(Context context, Intent intent) {
@@ -58,22 +66,24 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
         boolean hijri=p.getBoolean("hijri_"+id,false);
         int offset=p.getInt("offset_"+id,0);
 
-        if(ACTION_TOGGLE.equals(action)){ hijri=!hijri; offset=0; }
-        else if(ACTION_PREV.equals(action)) offset=Math.max(-120,offset-1);
-        else if(ACTION_NEXT.equals(action)) offset=Math.min(120,offset+1);
+        if(ACTION_TOGGLE.equals(action)){hijri=!hijri;offset=0;}
+        else if(ACTION_PREV.equals(action))offset=Math.max(-120,offset-1);
+        else if(ACTION_NEXT.equals(action))offset=Math.min(120,offset+1);
         else offset=0;
 
         p.edit().putBoolean("hijri_"+id,hijri).putInt("offset_"+id,offset).apply();
-        try { updateWidget(context,AppWidgetManager.getInstance(context),id); }
-        catch(Throwable t){ showFallback(context,AppWidgetManager.getInstance(context),id); }
+        safeUpdate(context,AppWidgetManager.getInstance(context),id);
     }
 
     public static void updateAll(Context context){
         AppWidgetManager m=AppWidgetManager.getInstance(context);
         ComponentName c=new ComponentName(context,CalendarWidgetProvider.class);
-        for(int id:m.getAppWidgetIds(c)){
-            try{ updateWidget(context,m,id); }catch(Throwable t){ showFallback(context,m,id); }
-        }
+        for(int id:m.getAppWidgetIds(c))safeUpdate(context,m,id);
+    }
+
+    private static void safeUpdate(Context context,AppWidgetManager manager,int id){
+        try{updateWidget(context,manager,id);}
+        catch(Throwable t){showFallback(context,manager,id);}
     }
 
     public static void updateWidget(Context context,AppWidgetManager manager,int id){
@@ -81,12 +91,23 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
         boolean hijri=p.getBoolean("hijri_"+id,false);
         int offset=p.getInt("offset_"+id,0);
         int theme=p.getInt("theme",0);
+        int glass=p.getInt("glass",1);
+        int fontPreset=p.getInt("font_preset",2);
+        String backgroundUri=p.getString("background_uri","");
 
-        RemoteViews v=new RemoteViews(context.getPackageName(),layoutForTheme(theme));
+        boolean hasPhoto=backgroundUri!=null&&!backgroundUri.isEmpty();
+        RemoteViews v=new RemoteViews(context.getPackageName(),layoutFor(theme,hasPhoto,glass));
+
+        if(hasPhoto){
+            Bitmap bg=loadBitmap(context,backgroundUri,1200);
+            if(bg!=null)v.setImageViewBitmap(R.id.calBackgroundImage,bg);
+        }
+
         LocalDate today=LocalDate.now();
-
-        if(hijri) renderHijri(v,today,offset,theme);
+        if(hijri)renderHijri(v,today,offset,theme);
         else renderGregorian(v,today,offset,theme);
+
+        applySizing(v,manager,id,fontPreset);
 
         v.setTextViewText(R.id.calToggle,hijri?"م ⇄ هـ":"هـ ⇄ م");
         v.setOnClickPendingIntent(R.id.calToggle,pi(context,id,ACTION_TOGGLE,1));
@@ -96,7 +117,32 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
         manager.updateAppWidget(id,v);
     }
 
-    private static int layoutForTheme(int theme){
+    private static void applySizing(RemoteViews v,AppWidgetManager manager,int id,int preset){
+        Bundle o=manager.getAppWidgetOptions(id);
+        int h=o==null?500:o.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT,500);
+        float user=preset==0?1.00f:(preset==1?1.15f:1.30f);
+        float area=Math.max(0.88f,Math.min(1.22f,h/430f));
+        float scale=user*area;
+
+        v.setTextViewTextSize(R.id.calTitle,TypedValue.COMPLEX_UNIT_SP,22f*scale);
+        v.setTextViewTextSize(R.id.calSubtitle,TypedValue.COMPLEX_UNIT_SP,12f*scale);
+        v.setTextViewTextSize(R.id.calToggle,TypedValue.COMPLEX_UNIT_SP,12f*scale);
+        v.setTextViewTextSize(R.id.calPrev,TypedValue.COMPLEX_UNIT_SP,12f*scale);
+        v.setTextViewTextSize(R.id.calToday,TypedValue.COMPLEX_UNIT_SP,12f*scale);
+        v.setTextViewTextSize(R.id.calNext,TypedValue.COMPLEX_UNIT_SP,12f*scale);
+        for(int dow:DOW)v.setTextViewTextSize(dow,TypedValue.COMPLEX_UNIT_SP,11f*scale);
+        for(int i=0;i<42;i++){
+            v.setTextViewTextSize(PRIMARY[i],TypedValue.COMPLEX_UNIT_SP,20f*scale);
+            v.setTextViewTextSize(SECONDARY[i],TypedValue.COMPLEX_UNIT_SP,9.5f*scale);
+        }
+    }
+
+    private static int layoutFor(int theme,boolean photo,int glass){
+        if(photo){
+            if(glass==0)return R.layout.widget_calendar_photo_light;
+            if(glass==2)return R.layout.widget_calendar_photo_dark;
+            return R.layout.widget_calendar_photo_medium;
+        }
         switch(theme){
             case 1:return R.layout.widget_calendar_glass;
             case 2:return R.layout.widget_calendar_green;
@@ -108,62 +154,65 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
 
     private static void renderGregorian(RemoteViews v,LocalDate today,int offset,int theme){
         YearMonth ym=YearMonth.from(today).plusMonths(offset);
-        int start=sundayIndex(ym.atDay(1).getDayOfWeek());
-        int days=ym.lengthOfMonth();
-        HijrahDate mid=HijrahDate.from(ym.atDay(Math.min(15,days)));
+        LocalDate first=ym.atDay(1);
+        int start=sundayIndex(first.getDayOfWeek());
+        LocalDate gridStart=first.minusDays(start);
+        HijrahDate mid=HijrahDate.from(ym.atDay(Math.min(15,ym.lengthOfMonth())));
 
         v.setTextViewText(R.id.calTitle,GREG_MONTHS[ym.getMonthValue()-1]+" "+ar(String.valueOf(ym.getYear())));
         v.setTextViewText(R.id.calSubtitle,HIJRI_MONTHS[mid.get(ChronoField.MONTH_OF_YEAR)-1]+" "+ar(String.valueOf(mid.get(ChronoField.YEAR)))+" هـ");
 
-        clear(v,theme);
-        for(int day=1;day<=days;day++){
-            int cell=start+day-1;
-            LocalDate date=ym.atDay(day);
+        for(int i=0;i<42;i++){
+            LocalDate date=gridStart.plusDays(i);
             HijrahDate hd=HijrahDate.from(date);
-            setCell(v,cell,date,ar(String.valueOf(day)),ar(String.valueOf(hd.get(ChronoField.DAY_OF_MONTH))),date.equals(today),theme);
+            boolean inMonth=date.getMonthValue()==ym.getMonthValue()&&date.getYear()==ym.getYear();
+            setCell(v,i,date,ar(String.valueOf(date.getDayOfMonth())),
+                    ar(String.valueOf(hd.get(ChronoField.DAY_OF_MONTH))),
+                    date.equals(today),inMonth,theme);
         }
+        styleHeaders(v);
     }
 
     private static void renderHijri(RemoteViews v,LocalDate today,int offset,int theme){
         HijrahDate current=HijrahDate.from(today);
         HijrahDate first=current.with(ChronoField.DAY_OF_MONTH,1).plus(offset,ChronoUnit.MONTHS);
-        int hm=first.get(ChronoField.MONTH_OF_YEAR), hy=first.get(ChronoField.YEAR), days=first.lengthOfMonth();
+        int hm=first.get(ChronoField.MONTH_OF_YEAR),hy=first.get(ChronoField.YEAR);
         LocalDate firstIso=LocalDate.from(first);
         int start=sundayIndex(firstIso.getDayOfWeek());
-        LocalDate mid=LocalDate.from(first.plus(Math.min(14,days-1),ChronoUnit.DAYS));
+        LocalDate gridStart=firstIso.minusDays(start);
+        LocalDate mid=LocalDate.from(first.plus(Math.min(14,first.lengthOfMonth()-1),ChronoUnit.DAYS));
 
         v.setTextViewText(R.id.calTitle,HIJRI_MONTHS[hm-1]+" "+ar(String.valueOf(hy))+" هـ");
         v.setTextViewText(R.id.calSubtitle,GREG_MONTHS[mid.getMonthValue()-1]+" "+ar(String.valueOf(mid.getYear())));
 
-        clear(v,theme);
-        for(int day=1;day<=days;day++){
-            HijrahDate hd=first.with(ChronoField.DAY_OF_MONTH,day);
-            LocalDate date=LocalDate.from(hd);
-            setCell(v,start+day-1,date,ar(String.valueOf(day)),ar(String.valueOf(date.getDayOfMonth())),date.equals(today),theme);
+        for(int i=0;i<42;i++){
+            LocalDate date=gridStart.plusDays(i);
+            HijrahDate hd=HijrahDate.from(date);
+            boolean inMonth=hd.get(ChronoField.MONTH_OF_YEAR)==hm&&hd.get(ChronoField.YEAR)==hy;
+            setCell(v,i,date,ar(String.valueOf(hd.get(ChronoField.DAY_OF_MONTH))),
+                    ar(String.valueOf(date.getDayOfMonth())),
+                    date.equals(today),inMonth,theme);
         }
+        styleHeaders(v);
     }
 
-    private static void clear(RemoteViews v,int theme){
-        int sub=secondaryColor(theme);
-        for(int i=0;i<42;i++){
-            v.setTextViewText(PRIMARY[i],"");
-            v.setTextViewText(SECONDARY[i],"");
-            v.setTextColor(PRIMARY[i],primaryColor(theme));
-            v.setTextColor(SECONDARY[i],sub);
-        }
-        for(int id:DOW)v.setTextColor(id,0xAFFFFFFF);
+    private static void styleHeaders(RemoteViews v){
+        for(int id:DOW)v.setTextColor(id,0xB8FFFFFF);
         v.setTextColor(R.id.calDow6,0xFFFFD477);
     }
 
-    private static void setCell(RemoteViews v,int cell,LocalDate date,String primary,String secondary,boolean today,int theme){
+    private static void setCell(RemoteViews v,int cell,LocalDate date,String primary,String secondary,
+                                boolean today,boolean inMonth,int theme){
         if(cell<0||cell>=42)return;
         int col=cell%7;
         int main=primaryColor(theme),sub=secondaryColor(theme);
-        if(col==5){main=0xFFFFD477;sub=0xFFF0A85B;}
+
+        if(!inMonth){main=0x66FFFFFF;sub=0x55C9B6E7;}
+        else if(col==5){main=0xFFFFD477;sub=0xFFF0A85B;}
         else if(col==6){main=0xFFEAF0F7;sub=0xFFB5C1D1;}
 
         if(today){
-            primary="● "+primary;
+            primary="●"+primary;
             main=0xFFFFE29A;
             sub=0xFFFFC65A;
         }
@@ -171,6 +220,25 @@ public class CalendarWidgetProvider extends AppWidgetProvider {
         v.setTextViewText(SECONDARY[cell],secondary);
         v.setTextColor(PRIMARY[cell],main);
         v.setTextColor(SECONDARY[cell],sub);
+    }
+
+    private static Bitmap loadBitmap(Context context,String raw,int maxSide){
+        try{
+            Uri uri=Uri.parse(raw);
+            BitmapFactory.Options bounds=new BitmapFactory.Options();
+            bounds.inJustDecodeBounds=true;
+            try(InputStream in=context.getContentResolver().openInputStream(uri)){
+                BitmapFactory.decodeStream(in,null,bounds);
+            }
+            int sample=1;
+            int largest=Math.max(bounds.outWidth,bounds.outHeight);
+            while(largest/sample>maxSide)sample*=2;
+            BitmapFactory.Options opts=new BitmapFactory.Options();
+            opts.inSampleSize=Math.max(1,sample);
+            try(InputStream in=context.getContentResolver().openInputStream(uri)){
+                return BitmapFactory.decodeStream(in,null,opts);
+            }
+        }catch(Throwable ignored){return null;}
     }
 
     private static void showFallback(Context context,AppWidgetManager manager,int id){

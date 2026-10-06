@@ -2,8 +2,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/calendarRoot"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" android:background="@drawable/calendar_bg_glass">
+    android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/calBackgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"/>
 
     <LinearLayout
         android:id="@+id/calPanel"
@@ -11,7 +17,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:layoutDirection="rtl"
-        android:padding="12dp">
+        android:padding="12dp" android:background="@drawable/calendar_photo_overlay_medium">
 
         <LinearLayout android:layout_width="match_parent" android:layout_height="54dp" android:orientation="horizontal" android:gravity="center_vertical" android:layoutDirection="rtl">
             <TextView android:id="@+id/calTitle" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:gravity="center_vertical|start" android:text="" android:textColor="#FFFFFF" android:textSize="26sp" android:textStyle="bold"/>
