@@ -15,8 +15,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 public class WeatherWorker extends Worker {
-    private static final double LAT = 28.3838;
-    private static final double LON = 36.5550;
+    private static final double DEFAULT_LAT = 28.3838;
+    private static final double DEFAULT_LON = 36.5550;
 
     public WeatherWorker(@NonNull Context context, @NonNull WorkerParameters params) {
         super(context, params);
@@ -26,17 +26,21 @@ public class WeatherWorker extends Worker {
     @Override
     public Result doWork() {
         try {
+            WeatherStore.Place place = WeatherStore.loadPlace(getApplicationContext());
+            double lat = place.hasLocation ? place.latitude : DEFAULT_LAT;
+            double lon = place.hasLocation ? place.longitude : DEFAULT_LON;
+
             String weatherUrl =
                     "https://api.open-meteo.com/v1/forecast"
-                    + "?latitude=" + LAT
-                    + "&longitude=" + LON
+                    + "?latitude=" + lat
+                    + "&longitude=" + lon
                     + "&current=temperature_2m,relative_humidity_2m,weather_code,is_day"
                     + "&timezone=Asia%2FRiyadh";
 
             String airUrl =
                     "https://air-quality-api.open-meteo.com/v1/air-quality"
-                    + "?latitude=" + LAT
-                    + "&longitude=" + LON
+                    + "?latitude=" + lat
+                    + "&longitude=" + lon
                     + "&current=dust,pm10"
                     + "&timezone=Asia%2FRiyadh";
 
@@ -47,7 +51,6 @@ public class WeatherWorker extends Worker {
             double humidity = weather.getDouble("relative_humidity_2m");
             int code = weather.getInt("weather_code");
             boolean isDay = weather.optInt("is_day", 1) == 1;
-
             double dust = air == null ? 0.0 : air.optDouble("dust", 0.0);
             double pm10 = air == null ? 0.0 : air.optDouble("pm10", 0.0);
 
@@ -66,7 +69,7 @@ public class WeatherWorker extends Worker {
         c.setConnectTimeout(8000);
         c.setReadTimeout(8000);
         c.setRequestProperty("Accept", "application/json");
-        c.setRequestProperty("User-Agent", "BAS-Weather/1.0");
+        c.setRequestProperty("User-Agent", "BAS-Weather/2.0");
 
         int status = c.getResponseCode();
         if (status < 200 || status >= 300) {

@@ -10,96 +10,155 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layoutDirection="rtl">
-
-        <TextView
-            android:id="@+id/weatherCity"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="تبوك"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:textSize="15sp"/>
-
-        <TextView
-            android:id="@+id/weatherRefresh"
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:gravity="center"
-            android:text="↻"
-            android:textColor="#CCFFFFFF"
-            android:textSize="22sp"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:layoutDirection="rtl">
 
-        <FrameLayout
-            android:layout_width="92dp"
-            android:layout_height="82dp">
-
-            <TextView
-                android:id="@+id/weatherIcon"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="☀️"
-                android:textSize="48sp"/>
-
-            <TextView
-                android:id="@+id/weatherDust"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="≋≋"
-                android:textColor="#F0D2A2"
-                android:textStyle="bold"
-                android:textSize="23sp"
-                android:visibility="gone"/>
-        </FrameLayout>
-
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
+            android:layout_height="match_parent"
+            android:layout_weight="1.65"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
             android:layoutDirection="rtl">
 
+            <FrameLayout
+                android:layout_width="92dp"
+                android:layout_height="82dp">
+                <TextView
+                    android:id="@+id/weatherIcon"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="☀️"
+                    android:textSize="48sp"/>
+                <TextView
+                    android:id="@+id/weatherDust"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="≋≋"
+                    android:textColor="#F0D2A2"
+                    android:textStyle="bold"
+                    android:textSize="23sp"
+                    android:visibility="gone"/>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center_vertical"
+                android:layoutDirection="rtl">
+                <TextView
+                    android:id="@+id/weatherTemp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="--°"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="32sp"/>
+                <TextView
+                    android:id="@+id/weatherCondition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="جاري التحديث"
+                    android:textColor="#E8F3FF"
+                    android:textSize="14sp"/>
+                <TextView
+                    android:id="@+id/weatherHumidity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="3dp"
+                    android:text="💧 الرطوبة --٪"
+                    android:textColor="#B8DFFF"
+                    android:textSize="13sp"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="#28FFFFFF"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingStart="10dp"
+            android:paddingEnd="7dp"
+            android:layoutDirection="rtl">
+
             <TextView
-                android:id="@+id/weatherTemp"
+                android:id="@+id/weatherCity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="--°"
+                android:gravity="center"
+                android:text="⌖  تبوك"
                 android:textColor="#FFFFFF"
                 android:textStyle="bold"
-                android:textSize="30sp"/>
+                android:textSize="16sp"
+                android:singleLine="true"/>
 
             <TextView
-                android:id="@+id/weatherCondition"
+                android:id="@+id/weatherDistrict"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="جاري التحديث"
-                android:textColor="#E8F3FF"
-                android:textSize="14sp"/>
+                android:gravity="center"
+                android:layout_marginTop="1dp"
+                android:text="حدّث الموقع من التطبيق"
+                android:textColor="#BFD0DF"
+                android:textSize="11sp"
+                android:singleLine="true"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layoutDirection="ltr">
+                <ImageView
+                    android:id="@+id/batteryIcon"
+                    android:layout_width="42dp"
+                    android:layout_height="28dp"
+                    android:contentDescription="@null"
+                    android:src="@drawable/ic_battery_mid"/>
+                <TextView
+                    android:id="@+id/batteryPercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="7dp"
+                    android:text="--٪"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    android:textSize="25sp"/>
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/weatherHumidity"
+                android:id="@+id/batteryLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:text="💧 الرطوبة --٪"
-                android:textColor="#B8DFFF"
-                android:textSize="13sp"/>
+                android:gravity="center"
+                android:text="البطارية"
+                android:textColor="#8BC7FF"
+                android:textSize="10sp"/>
+
+            <TextView
+                android:id="@+id/weatherRefresh"
+                android:layout_width="42dp"
+                android:layout_height="34dp"
+                android:gravity="center"
+                android:text="↻"
+                android:textColor="#CCFFFFFF"
+                android:textSize="22sp"/>
         </LinearLayout>
     </LinearLayout>
 

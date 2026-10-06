@@ -24,10 +24,10 @@ jobs:
           set -e
           BT="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           mkdir -p out
-          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V1_unsigned_aligned.apk
+          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V2_unsigned_aligned.apk
           cp "$BT/lib/apksigner.jar" out/apksigner.jar
           "$BT/zipalign" -c -v 4 out/BAS_Weather_V1_unsigned_aligned.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: BAS-Weather-V1-Unsigned
+          name: BAS-Weather-V2-Unsigned
           path: out/*

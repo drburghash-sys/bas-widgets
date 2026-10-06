@@ -34,6 +34,22 @@ public final class WeatherStore {
         }
     }
 
+    public static final class Place {
+        public final String city;
+        public final String district;
+        public final double latitude;
+        public final double longitude;
+        public final boolean hasLocation;
+
+        Place(String city, String district, double latitude, double longitude, boolean hasLocation) {
+            this.city = city;
+            this.district = district;
+            this.latitude = latitude;
+            this.longitude = longitude;
+            this.hasLocation = hasLocation;
+        }
+    }
+
     public static Snapshot load(Context context) {
         SharedPreferences p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         return new Snapshot(
@@ -59,6 +75,31 @@ public final class WeatherStore {
                 .putFloat("dust", (float) dust)
                 .putFloat("pm10", (float) pm10)
                 .putLong("updated_at", System.currentTimeMillis())
+                .apply();
+    }
+
+    public static Place loadPlace(Context context) {
+        SharedPreferences p = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        long latBits = p.getLong("latitude_bits", Double.doubleToRawLongBits(28.3838));
+        long lonBits = p.getLong("longitude_bits", Double.doubleToRawLongBits(36.5550));
+        return new Place(
+                p.getString("city", "تبوك"),
+                p.getString("district", "حدّث الموقع من التطبيق"),
+                Double.longBitsToDouble(latBits),
+                Double.longBitsToDouble(lonBits),
+                p.getBoolean("has_location", false)
+        );
+    }
+
+    public static void savePlace(Context context, String city, String district, double latitude, double longitude) {
+        if (city == null || city.trim().isEmpty()) city = "تبوك";
+        if (district == null || district.trim().isEmpty()) district = "الموقع الحالي";
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+                .putString("city", city.trim())
+                .putString("district", district.trim())
+                .putLong("latitude_bits", Double.doubleToRawLongBits(latitude))
+                .putLong("longitude_bits", Double.doubleToRawLongBits(longitude))
+                .putBoolean("has_location", true)
                 .apply();
     }
 
@@ -102,9 +143,7 @@ public final class WeatherStore {
     public static String arabicDigits(String source) {
         final char[] digits = {'٠','١','٢','٣','٤','٥','٦','٧','٨','٩'};
         StringBuilder out = new StringBuilder(source.length());
-        for (char c : source.toCharArray()) {
-            out.append(c >= '0' && c <= '9' ? digits[c - '0'] : c);
-        }
+        for (char c : source.toCharArray()) out.append(c >= '0' && c <= '9' ? digits[c - '0'] : c);
         return out.toString();
     }
 }
