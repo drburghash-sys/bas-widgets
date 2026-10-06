@@ -99,9 +99,15 @@ public class MainActivity extends Activity {
 
         Button manageTasks = button("فتح مفكرتي للمزامنة");
         manageTasks.setOnClickListener(v -> {
-            Intent launch = getPackageManager().getLaunchIntentForPackage("com.drburghash.homehubx");
-            if (launch != null) startActivity(launch);
-            else Toast.makeText(this, "Home Organizer غير مثبت", Toast.LENGTH_LONG).show();
+            Intent launch = new Intent();
+            launch.setClassName(
+                    "com.drburghash.bmsblank",
+                    "com.drburghash.bmsblank.MainActivity");
+            try {
+                startActivity(launch);
+            } catch (android.content.ActivityNotFoundException e) {
+                Toast.makeText(this, "تعذر فتح Home Organizer", Toast.LENGTH_LONG).show();
+            }
         });
         root.addView(manageTasks, fullButton(0));
 

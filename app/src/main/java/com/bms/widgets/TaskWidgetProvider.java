@@ -13,7 +13,7 @@ import android.widget.RemoteViews;
 import java.util.List;
 
 public class TaskWidgetProvider extends AppWidgetProvider {
-    private static final String HOME_ORGANIZER_PACKAGE = "com.drburghash.homehubx";
+    private static final String HOME_ORGANIZER_PACKAGE = "com.drburghash.bmsblank";
 
     private static final int[] TODAY_ROWS = {
             R.id.taskTodayRow1, R.id.taskTodayRow2, R.id.taskTodayRow3
@@ -135,9 +135,10 @@ public class TaskWidgetProvider extends AppWidgetProvider {
     }
 
     private static PendingIntent openHomeOrganizerPendingIntent(Context context) {
-        Intent launch = context.getPackageManager()
-                .getLaunchIntentForPackage(HOME_ORGANIZER_PACKAGE);
-        if (launch == null) launch = new Intent(context, MainActivity.class);
+        Intent launch = new Intent();
+        launch.setClassName(
+                HOME_ORGANIZER_PACKAGE,
+                "com.drburghash.bmsblank.MainActivity");
         launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         return PendingIntent.getActivity(
