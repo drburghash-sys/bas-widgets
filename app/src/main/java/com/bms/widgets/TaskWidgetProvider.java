@@ -13,7 +13,7 @@ import android.widget.RemoteViews;
 import java.util.List;
 
 public class TaskWidgetProvider extends AppWidgetProvider {
-    private static final String HOME_ORGANIZER_PACKAGE = "com.drburghash.bmsblank";
+    private static final String HOME_ORGANIZER_PACKAGE = "com.drburghash.homehubx";
 
     private static final int[] TODAY_ROWS = {
             R.id.taskTodayRow1, R.id.taskTodayRow2, R.id.taskTodayRow3
