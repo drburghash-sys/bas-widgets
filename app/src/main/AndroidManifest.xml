@@ -60,6 +60,19 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/clock_widget_info"/>
         </receiver>
 
+        <receiver android:name=".CalendarWidgetProvider" android:exported="false">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+                <action android:name="android.intent.action.DATE_CHANGED"/>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED"/>
+                <action android:name="com.bms.widgets.CALENDAR_TOGGLE"/>
+                <action android:name="com.bms.widgets.CALENDAR_PREV"/>
+                <action android:name="com.bms.widgets.CALENDAR_NEXT"/>
+                <action android:name="com.bms.widgets.CALENDAR_TODAY"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/calendar_widget_info"/>
+        </receiver>
+
         <receiver android:name=".TaskWidgetProvider" android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

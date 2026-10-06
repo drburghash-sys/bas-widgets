@@ -23,6 +23,7 @@ public class MainActivity extends Activity {
     private SeekBar fontSize;
     private Spinner colorSpinner, themeSpinner, clockSpinner;
     private Spinner clockWidgetTypeSpinner, analogStyleSpinner, digitalStyleSpinner, clockLogoSpinner;
+    private Spinner calendarThemeSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +105,30 @@ public class MainActivity extends Activity {
         Button addTasksWidget = button("إضافة ويدجت المهام");
         addTasksWidget.setOnClickListener(v -> pinWidget(TaskWidgetProvider.class));
         root.addView(addTasksWidget, fullButton(8));
+
+        TextView calendarTitle = text("ويدجت التقويم الهجري + الميلادي", 21, 0xFFFFFFFF);
+        calendarTitle.setGravity(Gravity.CENTER);
+        root.addView(calendarTitle, fullWrap(30, 10));
+
+        TextView calendarInfo = text(
+                "بدّل بين الهجري والميلادي مباشرة من الويدجت، وتنقّل بين الشهور أو ارجع لليوم بدون فتح التطبيق.",
+                13, 0xFFAAB2BE);
+        calendarInfo.setGravity(Gravity.CENTER);
+        root.addView(calendarInfo, fullWrap(0, 12));
+
+        root.addView(section("خلفية التقويم"), fullWrap(0, 6));
+        calendarThemeSpinner = spinner(new String[]{
+                "داكن فخم", "زجاجي شفاف", "أخضر سعودي", "أزرق ليلي", "ذهبي دافئ"
+        }, prefs.getInt("calendar_theme_index", 0));
+        root.addView(calendarThemeSpinner, fullWrap(0, 12));
+
+        Button saveCalendar = button("حفظ تصميم التقويم");
+        saveCalendar.setOnClickListener(v -> saveCalendarAndApply());
+        root.addView(saveCalendar, fullButton(0));
+
+        Button addCalendar = button("إضافة ويدجت التقويم");
+        addCalendar.setOnClickListener(v -> pinWidget(CalendarWidgetProvider.class));
+        root.addView(addCalendar, fullButton(8));
 
         TextView clockTitle = text("ويدجت الساعة المستقلة", 21, 0xFFFFFFFF);
         clockTitle.setGravity(Gravity.CENTER);
@@ -187,6 +212,19 @@ public class MainActivity extends Activity {
             TaskWidgetProvider.updateWidget(this, manager, id);
 
         Toast.makeText(this, "تم تطبيق الإعدادات", Toast.LENGTH_SHORT).show();
+    }
+
+    private void saveCalendarAndApply() {
+        prefs.edit()
+                .putInt("calendar_theme_index", calendarThemeSpinner.getSelectedItemPosition())
+                .apply();
+
+        AppWidgetManager manager = AppWidgetManager.getInstance(this);
+        ComponentName provider = new ComponentName(this, CalendarWidgetProvider.class);
+        for (int id : manager.getAppWidgetIds(provider))
+            CalendarWidgetProvider.updateWidget(this, manager, id);
+
+        Toast.makeText(this, "تم تطبيق تصميم التقويم", Toast.LENGTH_SHORT).show();
     }
 
     private void saveClockAndApply() {
