@@ -21,3 +21,10 @@
 - Refined Liverpool red/white and Saudi green/white adaptive backgrounds.
 - Removed BAS Platform widget from the exposed widget list.
 - Widget backgrounds resize independently from text scaling.
+
+
+## V1.8
+- ربط ويدجت المهام مباشرة مع «مفكرتي» داخل Home Organizer.
+- عرض مهام اليوم والمهام المتأخرة مع العدادات.
+- المزامنة تتم تلقائيًا عند فتح أو تعديل «مفكرتي».
+- الضغط على عنوان الويدجت أو أي مهمة يفتح Home Organizer.
