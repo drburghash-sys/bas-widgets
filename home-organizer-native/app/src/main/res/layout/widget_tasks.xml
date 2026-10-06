@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:layoutDirection="rtl"
     android:background="@drawable/widget_background"
-    android:padding="12dp">
+    android:padding="9dp">
 
     <LinearLayout
         android:id="@+id/header"
@@ -42,9 +42,11 @@
         android:textStyle="bold"
         android:textSize="13sp" />
 
-    <TextView android:id="@+id/today1" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
-    <TextView android:id="@+id/today2" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
-    <TextView android:id="@+id/today3" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/today1" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/today2" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/today3" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/today4" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/today5" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
 
     <TextView
         android:id="@+id/lateHeader"
@@ -56,9 +58,11 @@
         android:textStyle="bold"
         android:textSize="13sp" />
 
-    <TextView android:id="@+id/late1" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
-    <TextView android:id="@+id/late2" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
-    <TextView android:id="@+id/late3" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="13sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/late1" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/late2" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/late3" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/late4" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
+    <TextView android:id="@+id/late5" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#FFFFFF" android:textSize="12sp" android:singleLine="true" android:ellipsize="end" />
 
     <TextView
         android:id="@+id/emptyHint"
