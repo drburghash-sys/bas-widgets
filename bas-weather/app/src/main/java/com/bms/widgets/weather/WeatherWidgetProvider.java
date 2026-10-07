@@ -87,7 +87,7 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         WeatherStore.Place place = WeatherStore.loadPlace(context);
         RemoteViews v = new RemoteViews(context.getPackageName(), R.layout.widget_weather);
 
-        v.setTextViewText(R.id.weatherCity, "⌖  " + place.city);
+        v.setTextViewText(R.id.weatherCity, "📍 " + place.city);
         v.setTextViewText(R.id.weatherDistrict, place.district);
 
         int[] battery = batteryState(context);

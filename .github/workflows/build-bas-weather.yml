@@ -41,11 +41,11 @@ jobs:
           set -e
           BT="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
           mkdir -p out
-          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V2_aligned.apk
-          "$BT/apksigner" sign             --ks ~/.android/bas_weather_v2.jks             --ks-key-alias basweather             --ks-pass pass:BASWeatherV2_2026             --key-pass pass:BASWeatherV2_2026             --out out/BAS_Weather_V2.apk             out/BAS_Weather_V2_aligned.apk
-          "$BT/apksigner" verify --verbose --print-certs out/BAS_Weather_V2.apk
+          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V2_1_aligned.apk
+          "$BT/apksigner" sign             --ks ~/.android/bas_weather_v2.jks             --ks-key-alias basweather             --ks-pass pass:BASWeatherV2_2026             --key-pass pass:BASWeatherV2_2026             --out out/BAS_Weather_V2_1.apk             out/BAS_Weather_V2_1_aligned.apk
+          "$BT/apksigner" verify --verbose --print-certs out/BAS_Weather_V2_1.apk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: BAS-Weather-V2
-          path: out/BAS_Weather_V2.apk
+          name: BAS-Weather-V2.1
+          path: out/BAS_Weather_V2_1.apk
