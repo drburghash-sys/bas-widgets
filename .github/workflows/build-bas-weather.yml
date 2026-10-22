@@ -1,8 +1,14 @@
-name: Build BAS Weather
+name: Build BAS Weather Font Controls
 on:
   push:
-    branches: [ "weather-widget-extension-v1", "weather-font-controls-v2-2" ]
+    branches: [ "weather-font-controls-v2-2" ]
+    paths:
+      - 'bas-weather/**'
+      - '.github/workflows/build-bas-weather.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   build:
@@ -16,36 +22,9 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-
-      - name: Restore stable BAS Weather signing key
-        uses: actions/cache@v4
-        with:
-          path: ~/.android/bas_weather_v2.jks
-          key: bas-weather-signing-key-v2
-
-      - name: Ensure stable BAS Weather signing key
-        shell: bash
-        run: |
-          set -e
-          mkdir -p ~/.android
-          if [ ! -f ~/.android/bas_weather_v2.jks ]; then
-            keytool -genkeypair -v               -keystore ~/.android/bas_weather_v2.jks               -storepass BASWeatherV2_2026               -keypass BASWeatherV2_2026               -alias basweather               -keyalg RSA -keysize 2048 -validity 10000               -dname "CN=BAS Weather, O=BAS, C=SA"
-          fi
-
-      - name: Build release APK
-        run: gradle -p bas-weather clean assembleRelease
-
-      - name: Align and sign APK
-        shell: bash
-        run: |
-          set -e
-          BT="$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)"
-          mkdir -p out
-          "$BT/zipalign" -f 4             bas-weather/app/build/outputs/apk/release/app-release-unsigned.apk             out/BAS_Weather_V2_2_Font_aligned.apk
-          "$BT/apksigner" sign             --ks ~/.android/bas_weather_v2.jks             --ks-key-alias basweather             --ks-pass pass:BASWeatherV2_2026             --key-pass pass:BASWeatherV2_2026             --out out/BAS_Weather_V2_2_Font.apk             out/BAS_Weather_V2_1_aligned.apk
-          "$BT/apksigner" verify --verbose --print-certs out/BAS_Weather_V2_1.apk
-
+      - name: Build safe standalone weather APK
+        run: gradle -p bas-weather :app:assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
-          name: BAS-Weather-V2.2-Font
-          path: out/BAS_Weather_V2_1.apk
+          name: BAS-Weather-Font-Controls-v2.2
+          path: bas-weather/app/build/outputs/apk/debug/app-debug.apk
