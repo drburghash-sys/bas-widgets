@@ -26,7 +26,7 @@
             android:id="@+id/prayerLocation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="تبوك"
+            android:text="تبوك (افتراضي)"
             android:textColor="#CFFFFFFF"
             android:textSize="11sp"
             android:gravity="end"

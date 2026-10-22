@@ -1,10 +1,15 @@
 package com.bms.widgets;
 
 import android.app.Activity;
+import android.Manifest;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Looper;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -22,6 +27,11 @@ public class MainActivity extends Activity {
     private SharedPreferences prefs;
     private SeekBar fontSize;
     private Spinner colorSpinner, themeSpinner, clockSpinner;
+    private Spinner locationSpinner;
+    private TextView locationStatus;
+    private LocationManager locationManager;
+    private LocationListener locationListener;
+    private static final int REQUEST_LOCATION = 310;
     private Spinner clockWidgetTypeSpinner, analogStyleSpinner, digitalStyleSpinner, clockLogoSpinner;
 
     @Override
@@ -47,6 +57,22 @@ public class MainActivity extends Activity {
         TextView subtitle = text("إعدادات التاريخ والصلاة", 18, 0xFFC7CED8);
         subtitle.setGravity(Gravity.CENTER);
         root.addView(subtitle, fullWrap(0, 22));
+
+        root.addView(section("المدينة ومواقيت الصلاة"), fullWrap(0, 6));
+        root.addView(text("اختر الموقع التلقائي أو مدينة ثابتة. تحتاج المواقيت التلقائية إلى إذن الموقع.", 13, 0xFFAAB2BE), fullWrap(0, 8));
+        locationSpinner = spinner(PrayerLocation.OPTIONS, PrayerLocation.selection(this));
+        root.addView(locationSpinner, fullWrap(0, 8));
+        locationStatus = text("", 14, 0xFFC7CED8);
+        locationStatus.setGravity(Gravity.RIGHT);
+        showLocationStatus();
+        root.addView(locationStatus, fullWrap(0, 12));
+        Button locate = button("تحديث موقعي الآن");
+        locate.setOnClickListener(v -> {
+            locationSpinner.setSelection(0);
+            PrayerLocation.select(this, 0);
+            startLocationTracking(true);
+        });
+        root.addView(locate, fullButton(14));
 
         root.addView(section("حجم الخط"), fullWrap(0, 4));
         fontSize = new SeekBar(this);
@@ -155,6 +181,79 @@ public class MainActivity extends Activity {
         root.addView(addClock, fullButton(10));
 
         setContentView(scroll);
+        if (PrayerLocation.automatic(this)) startLocationTracking(true);
+    }
+
+    void showLocationStatus() {
+        if (locationStatus == null) return;
+        String label = PrayerLocation.city(this);
+        if (PrayerLocation.automatic(this) && !PrayerLocation.permissionGranted(this))
+            label += " — إذن الموقع غير ممنوح";
+        locationStatus.setText("الموقع المستخدم: " + label);
+    }
+
+    @Override protected void onResume() {
+        super.onResume();
+        if (PrayerLocation.automatic(this) && PrayerLocation.permissionGranted(this))
+            startLocationTracking(false);
+    }
+
+    @Override protected void onPause() {
+        stopLocationTracking();
+        super.onPause();
+    }
+
+    private void stopLocationTracking() {
+        if (locationManager != null && locationListener != null) {
+            try { locationManager.removeUpdates(locationListener); }
+            catch (SecurityException ignored) {}
+        }
+        locationListener = null;
+    }
+
+    private void startLocationTracking(boolean askForPermission) {
+        if (!PrayerLocation.automatic(this)) return;
+        if (!PrayerLocation.permissionGranted(this)) {
+            showLocationStatus();
+            if (askForPermission)
+                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION);
+            return;
+        }
+        PrayerLocation.refreshFromLastKnown(this);
+        showLocationStatus();
+        stopLocationTracking();
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager == null) return;
+        locationListener = new LocationListener() {
+            @Override public void onLocationChanged(Location location) {
+                PrayerLocation.accept(MainActivity.this, location);
+                showLocationStatus();
+            }
+        };
+        boolean enabled = false;
+        try {
+            if (locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
+                        30000L, 300f, locationListener, Looper.getMainLooper());
+                enabled = true;
+            }
+            if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                        30000L, 300f, locationListener, Looper.getMainLooper());
+                enabled = true;
+            }
+        } catch (SecurityException | IllegalArgumentException ignored) {}
+        if (!enabled && locationStatus != null)
+            locationStatus.setText("يرجى تشغيل خدمة الموقع في إعدادات الهاتف");
+    }
+
+    @Override public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+        super.onRequestPermissionsResult(requestCode, permissions, results);
+        if (requestCode == REQUEST_LOCATION) {
+            if (PrayerLocation.permissionGranted(this)) startLocationTracking(false);
+            else showLocationStatus();
+        }
     }
 
     private Spinner spinner(String[] items, int selection) {
@@ -179,6 +278,10 @@ public class MainActivity extends Activity {
     }
 
     private void saveAndApply() {
+        PrayerLocation.select(this, locationSpinner.getSelectedItemPosition());
+        showLocationStatus();
+        if (PrayerLocation.automatic(this)) startLocationTracking(true);
+        else stopLocationTracking();
         prefs.edit()
                 .putInt("font_percent", fontSize.getProgress() + 70)
                 .putInt("clock_format_index", clockSpinner.getSelectedItemPosition())

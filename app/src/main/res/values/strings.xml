@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">BMS Widgets</string>
     <string name="widget_description">التاريخ والوقت الميلادي والهجري</string>
-    <string name="prayer_widget_description">مواقيت الصلاة والشروق في تبوك</string>
+    <string name="prayer_widget_description">مواقيت الصلاة والشروق حسب الموقع الحالي أو المدينة المختارة</string>
     <string name="combined_widget_description">التاريخ الهجري والميلادي مع مواقيت الصلاة والشروق</string>
     <string name="clock_widget_description">ساعة مستقلة بعقارب أو رقمية مع تصاميم وشعارات قابلة للتبديل</string>
     <string name="task_widget_description">مهام مفكرتي لليوم والمهام المتأخرة</string>

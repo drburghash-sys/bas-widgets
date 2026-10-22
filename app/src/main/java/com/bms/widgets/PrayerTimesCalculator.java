@@ -1,5 +1,6 @@
 package com.bms.widgets;
 
+import android.content.Context;
 import android.icu.util.Calendar;
 import android.icu.util.IslamicCalendar;
 import android.icu.util.TimeZone;
@@ -11,9 +12,6 @@ import java.util.Locale;
 
 public final class PrayerTimesCalculator {
 
-    // Tabuk city center. V1.1 uses Tabuk as the default prayer-time location.
-    private static final double LATITUDE = 28.3833;
-    private static final double LONGITUDE = 36.5833;
     private static final ZoneId RIYADH_ZONE = ZoneId.of("Asia/Riyadh");
 
     private PrayerTimesCalculator() {}
@@ -37,11 +35,14 @@ public final class PrayerTimesCalculator {
         }
     }
 
-    public static Times calculateToday() {
-        LocalDate date = LocalDate.now(RIYADH_ZONE);
+    public static Times calculateToday(Context context) {
+        double latitude = PrayerLocation.latitude(context);
+        double longitude = PrayerLocation.longitude(context);
+        ZoneId zone = PrayerLocation.automatic(context) ? ZoneId.systemDefault() : RIYADH_ZONE;
+        LocalDate date = LocalDate.now(zone);
         int n = date.getDayOfYear();
 
-        double gamma = 2.0 * Math.PI / 365.0 * (n - 1);
+        double gamma = 2.0 * Math.PI / date.lengthOfYear() * (n - 1);
         double eqTime = 229.18 * (
                 0.000075
                         + 0.001868 * Math.cos(gamma)
@@ -57,13 +58,13 @@ public final class PrayerTimesCalculator {
                 - 0.002697 * Math.cos(3 * gamma)
                 + 0.00148 * Math.sin(3 * gamma);
 
-        ZonedDateTime noon = date.atTime(12, 0).atZone(RIYADH_ZONE);
+        ZonedDateTime noon = date.atTime(12, 0).atZone(zone);
         double tzHours = noon.getOffset().getTotalSeconds() / 3600.0;
 
-        double solarNoon = 720.0 - 4.0 * LONGITUDE - eqTime + tzHours * 60.0;
+        double solarNoon = 720.0 - 4.0 * longitude - eqTime + tzHours * 60.0;
 
-        double sunriseHA = hourAngleForZenith(90.833, decl);
-        double fajrHA = hourAngleForZenith(108.5, decl);
+        double sunriseHA = hourAngleForZenith(90.833, decl, latitude);
+        double fajrHA = hourAngleForZenith(108.5, decl, latitude);
 
         double sunrise = solarNoon - 4.0 * sunriseHA;
         double maghrib = solarNoon + 4.0 * sunriseHA;
@@ -72,12 +73,12 @@ public final class PrayerTimesCalculator {
 
         double asrAltitude = Math.toDegrees(Math.atan(
                 1.0 / (1.0 + Math.tan(Math.toRadians(
-                        Math.abs(LATITUDE - Math.toDegrees(decl)))))));
+                        Math.abs(latitude - Math.toDegrees(decl)))))));
 
-        double asrHA = hourAngleForAltitude(asrAltitude, decl);
+        double asrHA = hourAngleForAltitude(asrAltitude, decl, latitude);
         double asr = solarNoon + 4.0 * asrHA;
 
-        double isha = maghrib + (isRamadan() ? 120.0 : 90.0);
+        double isha = maghrib + (isRamadan(zone) ? 120.0 : 90.0);
 
         return new Times(
                 formatMinutes(fajr),
@@ -88,8 +89,8 @@ public final class PrayerTimesCalculator {
                 formatMinutes(isha));
     }
 
-    private static double hourAngleForZenith(double zenithDegrees, double declinationRad) {
-        double latRad = Math.toRadians(LATITUDE);
+    private static double hourAngleForZenith(double zenithDegrees, double declinationRad, double latitude) {
+        double latRad = Math.toRadians(latitude);
         double cosH =
                 (Math.cos(Math.toRadians(zenithDegrees)) /
                         (Math.cos(latRad) * Math.cos(declinationRad)))
@@ -98,8 +99,8 @@ public final class PrayerTimesCalculator {
         return Math.toDegrees(Math.acos(cosH));
     }
 
-    private static double hourAngleForAltitude(double altitudeDegrees, double declinationRad) {
-        double latRad = Math.toRadians(LATITUDE);
+    private static double hourAngleForAltitude(double altitudeDegrees, double declinationRad, double latitude) {
+        double latRad = Math.toRadians(latitude);
         double sinAlt = Math.sin(Math.toRadians(altitudeDegrees));
         double cosH =
                 (sinAlt - Math.sin(latRad) * Math.sin(declinationRad))
@@ -108,10 +109,10 @@ public final class PrayerTimesCalculator {
         return Math.toDegrees(Math.acos(cosH));
     }
 
-    private static boolean isRamadan() {
+    private static boolean isRamadan(ZoneId zone) {
         try {
             IslamicCalendar cal = new IslamicCalendar(
-                    TimeZone.getTimeZone("Asia/Riyadh"),
+                    TimeZone.getTimeZone(zone.getId()),
                     new Locale("ar", "SA"));
             cal.setCalculationType(IslamicCalendar.CalculationType.ISLAMIC_UMALQURA);
             cal.setTimeInMillis(System.currentTimeMillis());

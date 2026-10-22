@@ -25,10 +25,12 @@ public class CombinedWidgetProvider extends AppWidgetProvider {
         }
     }
     public static void updateWidget(Context c,AppWidgetManager m,int id){
+        PrayerLocation.refreshFromLastKnown(c);
         RemoteViews v=new RemoteViews(c.getPackageName(),R.layout.widget_combined);
         SimpleDateFormat hf=new SimpleDateFormat("d MMMM yyyy 'هـ'",Locale.forLanguageTag("ar-SA-u-ca-islamic-umalqura"));
         v.setTextViewText(R.id.combinedHijriDate,hf.format(new Date()));
-        PrayerTimesCalculator.Times t=PrayerTimesCalculator.calculateToday();
+        v.setTextViewText(R.id.combinedLocation,PrayerLocation.city(c));
+        PrayerTimesCalculator.Times t=PrayerTimesCalculator.calculateToday(c);
         int[] tids={R.id.combinedFajrTime,R.id.combinedSunriseTime,R.id.combinedDhuhrTime,R.id.combinedAsrTime,R.id.combinedMaghribTime,R.id.combinedIshaTime};
         String[] tv={t.fajr,t.sunrise,t.dhuhr,t.asr,t.maghrib,t.isha};
         for(int x=0;x<tids.length;x++)v.setTextViewText(tids[x],WidgetStyle.formatPrayerTime(c,tv[x]));

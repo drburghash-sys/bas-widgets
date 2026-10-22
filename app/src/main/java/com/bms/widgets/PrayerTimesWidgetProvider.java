@@ -21,8 +21,9 @@ public class PrayerTimesWidgetProvider extends AppWidgetProvider {
         }
     }
     public static void updateWidget(Context c,AppWidgetManager m,int id){
+        PrayerLocation.refreshFromLastKnown(c);
         RemoteViews v=new RemoteViews(c.getPackageName(),R.layout.widget_prayer_times);
-        PrayerTimesCalculator.Times t=PrayerTimesCalculator.calculateToday();
+        PrayerTimesCalculator.Times t=PrayerTimesCalculator.calculateToday(c);
         int[] ids={R.id.fajrTime,R.id.sunriseTime,R.id.dhuhrTime,R.id.asrTime,R.id.maghribTime,R.id.ishaTime};
         String[] val={t.fajr,t.sunrise,t.dhuhr,t.asr,t.maghrib,t.isha};
         for(int x=0;x<ids.length;x++)v.setTextViewText(ids[x],WidgetStyle.formatPrayerTime(c,val[x]));
@@ -31,6 +32,7 @@ public class PrayerTimesWidgetProvider extends AppWidgetProvider {
         int[] labels={R.id.fajrLabel,R.id.sunriseLabel,R.id.dhuhrLabel,R.id.asrLabel,R.id.maghribLabel,R.id.ishaLabel};
         for(int x:labels){v.setTextColor(x,color);v.setTextViewTextSize(x,TypedValue.COMPLEX_UNIT_SP,14*s);}
         for(int x:ids){v.setTextColor(x,color);v.setTextViewTextSize(x,TypedValue.COMPLEX_UNIT_SP,16*s);}
+        v.setTextViewText(R.id.prayerLocation,PrayerLocation.city(c));
         v.setTextColor(R.id.prayerLocation,WidgetStyle.withAlpha(color,195));
         v.setTextViewTextSize(R.id.prayerLocation,TypedValue.COMPLEX_UNIT_SP,11*s);
         PendingIntent p=PendingIntent.getActivity(c,200,new Intent(c,MainActivity.class),PendingIntent.FLAG_UPDATE_CURRENT|PendingIntent.FLAG_IMMUTABLE);
