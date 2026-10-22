@@ -54,7 +54,7 @@ public class MainActivity extends Activity {
         scroll.addView(root, new ScrollView.LayoutParams(
                 ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
 
-        TextView title = text("BMS Widgets", 28, 0xFFFFFFFF);
+        TextView title = text("BAS Widgets — الصلاة والتاريخ", 25, 0xFFFFFFFF);
         title.setGravity(Gravity.CENTER);
         root.addView(title, fullWrap(0, 6));
 
@@ -163,36 +163,6 @@ public class MainActivity extends Activity {
         addPrayer.setOnClickListener(v -> pinWidget(PrayerTimesWidgetProvider.class));
         root.addView(addPrayer, fullButton(8));
 
-        TextView tasksTitle = text("ويدجت مفكرتي", 21, 0xFFFFFFFF);
-        tasksTitle.setGravity(Gravity.CENTER);
-        root.addView(tasksTitle, fullWrap(30, 12));
-
-        TextView tasksInfo = text(
-                "يعرض المهام التي تمت مزامنتها مع الويدجت. افتح BAS الحديث ثم «مفكرتي»، وحدّث المزامنة من داخلها عند توفر خيار «تحديث ويدجت BAS».",
-                13, 0xFFAAB2BE);
-        tasksInfo.setGravity(Gravity.CENTER);
-        root.addView(tasksInfo, fullWrap(0, 12));
-
-        Button manageTasks = button("فتح BAS الحديث ثم مفكرتي");
-        manageTasks.setOnClickListener(v -> {
-            // Launch the installed modern BAS entry point; never fall back to old BMS Blank.
-            Intent launch = getPackageManager().getLaunchIntentForPackage("com.drburghash.homehubx");
-            if (launch == null) {
-                Toast.makeText(this, "تعذر العثور على BAS الحديث على هذا الجهاز", Toast.LENGTH_LONG).show();
-                return;
-            }
-            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            try {
-                startActivity(launch);
-            } catch (android.content.ActivityNotFoundException | SecurityException e) {
-                Toast.makeText(this, "تعذر فتح BAS الحديث", Toast.LENGTH_LONG).show();
-            }
-        });
-        root.addView(manageTasks, fullButton(0));
-
-        Button addTasksWidget = button("إضافة ويدجت مفكرتي");
-        addTasksWidget.setOnClickListener(v -> pinWidget(TaskWidgetProvider.class));
-        root.addView(addTasksWidget, fullButton(8));
 
         TextView clockTitle = text("ويدجت الساعة المستقلة", 21, 0xFFFFFFFF);
         clockTitle.setGravity(Gravity.CENTER);
@@ -354,9 +324,7 @@ public class MainActivity extends Activity {
         updateAll(manager, CombinedWidgetProvider.class, 3);
         updateAll(manager, ClockWidgetProvider.class, 4);
 
-        ComponentName taskProvider = new ComponentName(this, TaskWidgetProvider.class);
-        for (int id : manager.getAppWidgetIds(taskProvider))
-            TaskWidgetProvider.updateWidget(this, manager, id);
+
     }
 
     @Override protected void onDestroy() {
