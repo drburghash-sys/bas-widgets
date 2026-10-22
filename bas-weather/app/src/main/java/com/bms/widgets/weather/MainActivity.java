@@ -6,6 +6,10 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,6 +19,11 @@ import android.widget.Toast;
 public class MainActivity extends Activity {
     private static final int REQ_LOCATION = 77;
     private TextView locationText;
+    private TextView fontPercentText;
+    private TextView fontPreview;
+    private SeekBar fontSlider;
+    private final Handler fontHandler = new Handler(Looper.getMainLooper());
+    private final Runnable pendingFontRefresh = () -> WeatherWidgetProvider.updateAll(this);
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,7 +44,64 @@ public class MainActivity extends Activity {
 
         locationText = text(placeLine(), 15, 0xFFB7C5D3);
         locationText.setGravity(Gravity.CENTER);
-        root.addView(locationText, full(0, 20));
+        root.addView(locationText, full(0, 16));
+
+        TextView fontTitle = text("حجم خط ويدجت الطقس", 20, 0xFFFFFFFF);
+        fontTitle.setGravity(Gravity.CENTER);
+        root.addView(fontTitle, full(0, 8));
+
+        int savedFont = WeatherStore.fontPercent(this);
+        fontPercentText = text("الحجم الحالي: " + WeatherStore.arabicDigits(savedFont + "٪"), 17, 0xFFE6F3FF);
+        fontPercentText.setGravity(Gravity.CENTER);
+        root.addView(fontPercentText, full(0, 5));
+
+        fontPreview = text("سكاكا  ٢٧°  |  الرطوبة ٤٠٪  |  البطارية ٨٥٪", 15, 0xFFD5E8F7);
+        fontPreview.setGravity(Gravity.CENTER);
+        fontPreview.setTextSize(15f * savedFont / 100f);
+        root.addView(fontPreview, full(0, 10));
+
+        fontSlider = new SeekBar(this);
+        fontSlider.setMax(110); // 70–180 percent
+        fontSlider.setProgress(savedFont - 70);
+        fontSlider.setContentDescription("التحكم بحجم نصوص ويدجت الطقس من ٧٠ إلى ١٨٠ بالمئة");
+        fontSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+                int percent = progress + 70;
+                if (fontPercentText != null) {
+                    fontPercentText.setText("الحجم الحالي: " + WeatherStore.arabicDigits(percent + "٪"));
+                    fontPreview.setTextSize(15f * percent / 100f);
+                }
+                if (fromUser) {
+                    WeatherStore.saveFontPercent(MainActivity.this, percent);
+                    fontHandler.removeCallbacks(pendingFontRefresh);
+                    fontHandler.postDelayed(pendingFontRefresh, 180);
+                }
+            }
+            @Override public void onStartTrackingTouch(SeekBar bar) {}
+            @Override public void onStopTrackingTouch(SeekBar bar) {
+                WeatherStore.saveFontPercent(MainActivity.this, bar.getProgress() + 70);
+                fontHandler.removeCallbacks(pendingFontRefresh);
+                WeatherWidgetProvider.updateAll(MainActivity.this);
+            }
+        });
+        root.addView(fontSlider, full(0, 5));
+
+        LinearLayout fontButtons = new LinearLayout(this);
+        fontButtons.setOrientation(LinearLayout.HORIZONTAL);
+        fontButtons.setGravity(Gravity.CENTER);
+        Button shrink = button("A−");
+        Button defaultSize = button("١٠٠٪");
+        Button enlarge = button("A+");
+        shrink.setOnClickListener(v -> changeFont(-5));
+        enlarge.setOnClickListener(v -> changeFont(5));
+        defaultSize.setOnClickListener(v -> changeFontTo(100));
+        fontButtons.addView(shrink, new LinearLayout.LayoutParams(0, dp(46), 1));
+        fontButtons.addView(defaultSize, new LinearLayout.LayoutParams(0, dp(46), 1));
+        fontButtons.addView(enlarge, new LinearLayout.LayoutParams(0, dp(46), 1));
+        root.addView(fontButtons, full(0, 6));
+        TextView fontHint = text("يتغير حجم نصوص المدينة والحي والحرارة والرطوبة والبطارية مباشرة في الويدجت. قد تحتاج إلى توسيع الويدجت عند اختيار أحجام كبيرة.", 12, 0xFF8FA8BD);
+        fontHint.setGravity(Gravity.CENTER);
+        root.addView(fontHint, full(0, 18));
 
         Button location = button("تحديث المدينة والحي");
         location.setOnClickListener(v -> ensureLocation());
@@ -57,13 +123,36 @@ public class MainActivity extends Activity {
         note.setGravity(Gravity.CENTER);
         root.addView(note, full(6, 0));
 
-        setContentView(root);
+        ScrollView scroll = new ScrollView(this);
+        scroll.setFillViewport(true);
+        scroll.addView(root, new ScrollView.LayoutParams(
+                ScrollView.LayoutParams.MATCH_PARENT, ScrollView.LayoutParams.WRAP_CONTENT));
+        setContentView(scroll);
         WeatherWidgetProvider.schedulePeriodic(this);
 
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             updateLocation();
         }
+    }
+
+    private void changeFont(int by) {
+        changeFontTo(WeatherStore.fontPercent(this) + by);
+    }
+
+    private void changeFontTo(int percent) {
+        percent = Math.max(70, Math.min(180, percent));
+        WeatherStore.saveFontPercent(this, percent);
+        fontSlider.setProgress(percent - 70);
+        fontPercentText.setText("الحجم الحالي: " + WeatherStore.arabicDigits(percent + "٪"));
+        fontPreview.setTextSize(15f * percent / 100f);
+        fontHandler.removeCallbacks(pendingFontRefresh);
+        WeatherWidgetProvider.updateAll(this);
+    }
+
+    @Override protected void onDestroy() {
+        fontHandler.removeCallbacks(pendingFontRefresh);
+        super.onDestroy();
     }
 
     private Button button(String label) {

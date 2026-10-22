@@ -11,6 +11,18 @@ public final class WeatherStore {
     private static final String PREFS = "bas_weather";
     private WeatherStore() {}
 
+    /** Weather-only font preference: does not share keys with BAS Widgets. */
+    public static int fontPercent(Context context) {
+        int value = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getInt("weather_font_percent", 100);
+        return Math.max(70, Math.min(180, value));
+    }
+
+    public static void saveFontPercent(Context context, int percent) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
+                .putInt("weather_font_percent", Math.max(70, Math.min(180, percent))).apply();
+    }
+
     public static final class Snapshot {
         public final boolean hasData;
         public final float temperature;

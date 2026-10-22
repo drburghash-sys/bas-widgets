@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -116,6 +117,8 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 s.updatedAt > 0 ? "آخر تحديث " + WeatherStore.formatTime(s.updatedAt)
                         : "اضغط ↻ للتحديث");
 
+        applyFontSize(context, v);
+
         Intent refresh = new Intent(context, WeatherWidgetProvider.class).setAction(ACTION_REFRESH);
         PendingIntent refreshPi = PendingIntent.getBroadcast(
                 context, 9001, refresh, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
@@ -127,6 +130,27 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         v.setOnClickPendingIntent(R.id.weatherRoot, openPi);
 
         manager.updateAppWidget(widgetId, v);
+    }
+
+    /** Scale widget text without changing the separate weather icon and battery graphics. */
+    private static void applyFontSize(Context context, RemoteViews views) {
+        float scale = WeatherStore.fontPercent(context) / 100f;
+        setSize(views, R.id.weatherCity, 17f * scale);
+        setSize(views, R.id.weatherDistrict, 12f * scale);
+        setSize(views, R.id.weatherTemp, 31f * scale);
+        setSize(views, R.id.weatherCondition, 14f * scale);
+        setSize(views, R.id.weatherHumidity, 13f * scale);
+        setSize(views, R.id.batteryPercent, 27f * scale);
+        setSize(views, R.id.batteryLabel, 10f * scale);
+        setSize(views, R.id.weatherUpdated, 10f * scale);
+        // Emoji/icon text is constrained to fixed icon areas; keep it legible.
+        setSize(views, R.id.weatherIcon, Math.min(67f, 48f * scale));
+        setSize(views, R.id.weatherDust, Math.min(32f, 23f * scale));
+        setSize(views, R.id.weatherRefresh, Math.min(32f, 22f * scale));
+    }
+
+    private static void setSize(RemoteViews views, int id, float size) {
+        views.setTextViewTextSize(id, TypedValue.COMPLEX_UNIT_SP, size);
     }
 
     private static int[] batteryState(Context context) {
