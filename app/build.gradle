@@ -1,3 +1,20 @@
 plugins { id 'com.android.application' }
-android { namespace 'com.bms.widgets'; compileSdk 35
-defaultConfig { applicationId 'com.bms.widgets'; minSdk 26; targetSdk 35; versionCode 13; versionName '2.2' } }
+android {
+    namespace 'com.bms.widgets'
+    compileSdk 35
+    defaultConfig {
+        applicationId 'com.bms.widgets'
+        minSdk 26
+        targetSdk 35
+        versionCode 13
+        versionName '2.2'
+        manifestPlaceholders = [displayName: 'BMS Widgets']
+    }
+    buildTypes {
+        debug {
+            // A separate installation is safer when the previous APK was signed with another key.
+            applicationIdSuffix '.location'
+            manifestPlaceholders = [displayName: 'BAS Widgets - الموقع']
+        }
+    }
+}
