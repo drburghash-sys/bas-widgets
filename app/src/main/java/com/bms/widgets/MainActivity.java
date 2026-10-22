@@ -118,21 +118,24 @@ public class MainActivity extends Activity {
         root.addView(tasksTitle, fullWrap(30, 12));
 
         TextView tasksInfo = text(
-                "يعرض مهام اليوم والمهام المتأخرة من «مفكرتي» المخزنة داخل BMS Blank. افتح BMS ثم «مفكرتي» واضغط «تحديث ويدجت BAS».",
+                "يعرض المهام التي تمت مزامنتها مع الويدجت. افتح BAS الحديث ثم «مفكرتي»، وحدّث المزامنة من داخلها عند توفر خيار «تحديث ويدجت BAS».",
                 13, 0xFFAAB2BE);
         tasksInfo.setGravity(Gravity.CENTER);
         root.addView(tasksInfo, fullWrap(0, 12));
 
-        Button manageTasks = button("فتح BMS ثم مفكرتي");
+        Button manageTasks = button("فتح BAS الحديث ثم مفكرتي");
         manageTasks.setOnClickListener(v -> {
-            Intent launch = new Intent();
-            launch.setClassName(
-                    "com.drburghash.bmsblank",
-                    "com.drburghash.bmsblank.MainActivity");
+            // Launch the installed modern BAS entry point; never fall back to old BMS Blank.
+            Intent launch = getPackageManager().getLaunchIntentForPackage("com.drburghash.homehubx");
+            if (launch == null) {
+                Toast.makeText(this, "تعذر العثور على BAS الحديث على هذا الجهاز", Toast.LENGTH_LONG).show();
+                return;
+            }
+            launch.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             try {
                 startActivity(launch);
-            } catch (android.content.ActivityNotFoundException e) {
-                Toast.makeText(this, "تعذر فتح Home Organizer", Toast.LENGTH_LONG).show();
+            } catch (android.content.ActivityNotFoundException | SecurityException e) {
+                Toast.makeText(this, "تعذر فتح BAS الحديث", Toast.LENGTH_LONG).show();
             }
         });
         root.addView(manageTasks, fullButton(0));
