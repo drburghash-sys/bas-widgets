@@ -10,6 +10,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Looper;
+import android.os.Handler;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -26,6 +27,9 @@ public class MainActivity extends Activity {
     private static final String PREFS = "bms_widget_prefs";
     private SharedPreferences prefs;
     private SeekBar fontSize;
+    private TextView fontPercentLabel, fontPreview;
+    private final Handler fontUpdateHandler = new Handler(Looper.getMainLooper());
+    private final Runnable deferredFontUpdate = this::updateAllFontWidgets;
     private Spinner colorSpinner, themeSpinner, clockSpinner;
     private Spinner locationSpinner;
     private TextView locationStatus;
@@ -74,14 +78,60 @@ public class MainActivity extends Activity {
         });
         root.addView(locate, fullButton(14));
 
-        root.addView(section("حجم الخط"), fullWrap(0, 4));
+        root.addView(section("حجم خط الويدجت"), fullWrap(0, 4));
+        final int savedPercent = Math.max(70, Math.min(150, prefs.getInt("font_percent", 100)));
+        fontPercentLabel = text("الحجم الحالي: " + arabicDigits(savedPercent) + "٪", 17, 0xFFFFFFFF);
+        fontPercentLabel.setGravity(Gravity.RIGHT);
+        root.addView(fontPercentLabel, fullWrap(0, 4));
+
+        fontPreview = text("الجمعة  •  التاريخ الهجري والميلادي  •  الصلاة", 16, 0xFFD9E7F9);
+        fontPreview.setGravity(Gravity.CENTER);
+        fontPreview.setTextSize(16f * savedPercent / 100f);
+        root.addView(fontPreview, fullWrap(0, 8));
+
         fontSize = new SeekBar(this);
         fontSize.setMax(80);
-        int savedPercent = prefs.getInt("font_percent", 100);
-        fontSize.setProgress(Math.max(0, Math.min(80, savedPercent - 70)));
+        fontSize.setProgress(savedPercent - 70);
+        fontSize.setContentDescription("تغيير حجم خط الويدجت من سبعين إلى مئة وخمسين بالمئة");
+        fontSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar bar, int progress, boolean fromUser) {
+                int percent = 70 + progress;
+                fontPercentLabel.setText("الحجم الحالي: " + arabicDigits(percent) + "٪");
+                fontPreview.setTextSize(16f * percent / 100f);
+                if (fromUser) {
+                    prefs.edit().putInt("font_percent", percent).apply();
+                    fontUpdateHandler.removeCallbacks(deferredFontUpdate);
+                    fontUpdateHandler.postDelayed(deferredFontUpdate, 300);
+                }
+            }
+            @Override public void onStartTrackingTouch(SeekBar bar) {}
+            @Override public void onStopTrackingTouch(SeekBar bar) {
+                fontUpdateHandler.removeCallbacks(deferredFontUpdate);
+                updateAllFontWidgets();
+            }
+        });
         root.addView(fontSize, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        root.addView(text("70%                                      150%", 12, 0xFF8F98A5), fullWrap(0, 16));
+
+        LinearLayout limits = new LinearLayout(this);
+        limits.setOrientation(LinearLayout.HORIZONTAL);
+        TextView minimum = text("٧٠٪ — أصغر", 12, 0xFFABB8C9);
+        TextView maximum = text("١٥٠٪ — أكبر", 12, 0xFFABB8C9);
+        limits.addView(minimum, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        maximum.setGravity(Gravity.RIGHT);
+        limits.addView(maximum, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
+        root.addView(limits, fullWrap(0, 8));
+
+        Button resetFont = button("إعادة حجم الخط الافتراضي (١٠٠٪)");
+        resetFont.setOnClickListener(v -> {
+            fontUpdateHandler.removeCallbacks(deferredFontUpdate);
+            fontSize.setProgress(30);
+            prefs.edit().putInt("font_percent", 100).apply();
+            updateAllFontWidgets();
+        });
+        root.addView(resetFont, fullButton(8));
+        root.addView(text("يُطبّق الحجم تلقائيًا على ويدجت الشاشة الرئيسية، مع بقاء إعدادات الألوان والخلفية دون تغيير.",
+                13, 0xFFABB8C9), fullWrap(6, 16));
 
         root.addView(section("نظام الوقت"), fullWrap(0, 6));
         clockSpinner = spinner(new String[]{"12 ساعة", "24 ساعة"}, prefs.getInt("clock_format_index", 0));
@@ -292,6 +342,12 @@ public class MainActivity extends Activity {
                 .putInt("theme_index", themeSpinner.getSelectedItemPosition())
                 .apply();
 
+        updateAllFontWidgets();
+        Toast.makeText(this, "تم تطبيق الإعدادات", Toast.LENGTH_SHORT).show();
+    }
+
+    // Refresh widgets without overwriting other unsaved preferences in the settings form.
+    private void updateAllFontWidgets() {
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
         updateAll(manager, DateTimeWidgetProvider.class, 1);
         updateAll(manager, PrayerTimesWidgetProvider.class, 2);
@@ -301,8 +357,11 @@ public class MainActivity extends Activity {
         ComponentName taskProvider = new ComponentName(this, TaskWidgetProvider.class);
         for (int id : manager.getAppWidgetIds(taskProvider))
             TaskWidgetProvider.updateWidget(this, manager, id);
+    }
 
-        Toast.makeText(this, "تم تطبيق الإعدادات", Toast.LENGTH_SHORT).show();
+    @Override protected void onDestroy() {
+        fontUpdateHandler.removeCallbacks(deferredFontUpdate);
+        super.onDestroy();
     }
 
     private void saveClockAndApply() {
@@ -361,6 +420,12 @@ public class MainActivity extends Activity {
                 LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         p.setMargins(0, dp(top), 0, dp(bottom));
         return p;
+    }
+
+    private String arabicDigits(int number) {
+        return String.valueOf(number)
+                .replace('0','٠').replace('1','١').replace('2','٢').replace('3','٣').replace('4','٤')
+                .replace('5','٥').replace('6','٦').replace('7','٧').replace('8','٨').replace('9','٩');
     }
 
     private int dp(int value) {

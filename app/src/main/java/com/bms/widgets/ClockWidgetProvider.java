@@ -25,15 +25,17 @@ public class ClockWidgetProvider extends AppWidgetProvider {
             v=new RemoteViews(c.getPackageName(),analogLayout(ai));root=R.id.clockRoot;
             v.setTextViewText(R.id.clockLogo,WidgetStyle.clockLogo(c));
             v.setTextColor(R.id.clockLogo,WidgetStyle.clockLogoColor(c));
+            v.setTextViewTextSize(R.id.clockLogo,TypedValue.COMPLEX_UNIT_SP,14f*WidgetStyle.getFontScale(c));
         }else{
             v=new RemoteViews(c.getPackageName(),R.layout.widget_clock_digital);root=R.id.clockDigitalRoot;
             v.setInt(root,"setBackgroundResource",digitalBackground(di));
-            int color=digitalTextColor(di);float size=digitalTextSize(di);
+            int color=digitalTextColor(di);float size=digitalTextSize(di)*WidgetStyle.getFontScale(c);
             v.setTextColor(R.id.clockDigitalTime12,color);v.setTextColor(R.id.clockDigitalTime24,color);
             v.setTextViewTextSize(R.id.clockDigitalTime12,TypedValue.COMPLEX_UNIT_SP,size);
             v.setTextViewTextSize(R.id.clockDigitalTime24,TypedValue.COMPLEX_UNIT_SP,size);
             v.setTextViewText(R.id.clockDigitalLogo,WidgetStyle.clockLogo(c));
             v.setTextColor(R.id.clockDigitalLogo,WidgetStyle.clockLogoColor(c));
+            v.setTextViewTextSize(R.id.clockDigitalLogo,TypedValue.COMPLEX_UNIT_SP,18f*WidgetStyle.getFontScale(c));
             boolean h24=WidgetStyle.use24Hour(c);
             v.setViewVisibility(R.id.clockDigitalTime12,h24?View.GONE:View.VISIBLE);
             v.setViewVisibility(R.id.clockDigitalTime24,h24?View.VISIBLE:View.GONE);
