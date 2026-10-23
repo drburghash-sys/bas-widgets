@@ -24,6 +24,19 @@ public final class WeatherStore {
                 .edit().putInt("weather_font_percent", value).apply();
     }
 
+    /** 0% = opaque picture; 100% = picture completely transparent. */
+    public static int backgroundTransparency(Context context) {
+        int percent = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getInt("weather_photo_transparency", 30);
+        return Math.max(0, Math.min(100, percent));
+    }
+
+    public static void saveBackgroundTransparency(Context context, int percent) {
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putInt("weather_photo_transparency",
+                        Math.max(0, Math.min(100, percent))).apply();
+    }
+
     public static final class Snapshot {
         public final boolean hasData;
         public final float temperature;

@@ -96,6 +96,16 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
         WeatherStore.Place place = WeatherStore.loadPlace(context);
         RemoteViews v = new RemoteViews(context.getPackageName(), R.layout.widget_weather);
 
+        // The picture goes behind the weather content and never changes text opacity.
+        android.graphics.Bitmap picture = WeatherBackground.widgetPhoto(context,
+                WeatherStore.backgroundTransparency(context));
+        if (picture == null) {
+            v.setViewVisibility(R.id.weatherBackgroundPhoto, View.GONE);
+        } else {
+            v.setImageViewBitmap(R.id.weatherBackgroundPhoto, picture);
+            v.setViewVisibility(R.id.weatherBackgroundPhoto, View.VISIBLE);
+        }
+
         v.setTextViewText(R.id.weatherCity, "📍 " + place.city);
         v.setTextViewText(R.id.weatherDistrict, place.district);
 

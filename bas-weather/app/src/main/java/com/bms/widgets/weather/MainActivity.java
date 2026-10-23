@@ -3,6 +3,10 @@ package com.bms.widgets.weather;
 import android.Manifest;
 import android.app.Activity;
 import android.appwidget.AppWidgetManager;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.view.View;
+import android.widget.ImageView;
 import android.content.ComponentName;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -16,8 +20,11 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final int REQ_LOCATION = 77;
+    private static final int REQUEST_BACKGROUND_IMAGE = 2023;
     private TextView locationText;
     private TextView fontStatus;
+    private TextView backgroundStatus;
+    private ImageView backgroundPreview;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,6 +78,73 @@ public class MainActivity extends Activity {
         defaultFont.setOnClickListener(v -> fontSlider.setProgress(30));
         root.addView(defaultFont, full(0, 14));
 
+        TextView backgroundHeading = text("خلفية ويدجت الطقس", 19, 0xFFFFFFFF);
+        backgroundHeading.setGravity(Gravity.CENTER);
+        root.addView(backgroundHeading, full(8, 8));
+
+        backgroundStatus = text("", 15, 0xFFD6E8F7);
+        backgroundStatus.setGravity(Gravity.CENTER);
+        root.addView(backgroundStatus, full(0, 8));
+
+        backgroundPreview = new ImageView(this);
+        backgroundPreview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        backgroundPreview.setBackgroundColor(0xFF17283B);
+        root.addView(backgroundPreview, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(120)));
+
+        Button chooseBackground = button("اختيار صورة خلفية من المعرض");
+        chooseBackground.setOnClickListener(v -> {
+            Intent pick = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            pick.addCategory(Intent.CATEGORY_OPENABLE);
+            pick.setType("image/*");
+            try {
+                startActivityForResult(pick, REQUEST_BACKGROUND_IMAGE);
+            } catch (android.content.ActivityNotFoundException error) {
+                Toast.makeText(this, "تعذر فتح معرض الصور", Toast.LENGTH_LONG).show();
+            }
+        });
+        root.addView(chooseBackground, full(12, 8));
+
+        int initialTransparency = WeatherStore.backgroundTransparency(this);
+        TextView transparencyLabel = text(
+                "شفافية الصورة: " + WeatherStore.arabicDigits(initialTransparency + "٪"),
+                16, 0xFFD6E8F7);
+        transparencyLabel.setGravity(Gravity.CENTER);
+        root.addView(transparencyLabel, full(0, 5));
+
+        SeekBar transparencySlider = new SeekBar(this);
+        transparencySlider.setMax(100);
+        transparencySlider.setProgress(initialTransparency);
+        transparencySlider.setContentDescription("شفافية صورة خلفية الطقس: صفر يعني واضحة تمامًا، مئة يعني مخفية");
+        transparencySlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar slider, int percent, boolean fromUser) {
+                transparencyLabel.setText("شفافية الصورة: " +
+                        WeatherStore.arabicDigits(percent + "٪"));
+                if (fromUser) WeatherStore.saveBackgroundTransparency(MainActivity.this, percent);
+            }
+            @Override public void onStartTrackingTouch(SeekBar slider) {}
+            @Override public void onStopTrackingTouch(SeekBar slider) {
+                WeatherStore.saveBackgroundTransparency(MainActivity.this, slider.getProgress());
+                WeatherWidgetProvider.updateAll(MainActivity.this);
+            }
+        });
+        root.addView(transparencySlider, full(0, 4));
+        TextView alphaGuide = text(
+                "٠٪ = الصورة واضحة بالكامل   ·   ١٠٠٪ = الصورة مخفية",
+                12, 0xFF9BAFC2);
+        alphaGuide.setGravity(Gravity.CENTER);
+        root.addView(alphaGuide, full(0, 10));
+
+        Button clearBackground = button("حذف الصورة واستعادة الخلفية الأصلية");
+        clearBackground.setOnClickListener(v -> {
+            WeatherBackground.clear(this);
+            refreshBackgroundPreview();
+            WeatherWidgetProvider.updateAll(this);
+            Toast.makeText(this, "تمت استعادة الخلفية الأصلية", Toast.LENGTH_SHORT).show();
+        });
+        root.addView(clearBackground, full(0, 18));
+        refreshBackgroundPreview();
+
         Button location = button("تحديث المدينة والحي");
         location.setOnClickListener(v -> ensureLocation());
         root.addView(location, full(0, 8));
@@ -100,6 +174,49 @@ public class MainActivity extends Activity {
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             updateLocation();
+        }
+    }
+
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQUEST_BACKGROUND_IMAGE
+                || resultCode != RESULT_OK || data == null || data.getData() == null) return;
+        android.net.Uri selectedImage = data.getData();
+        Toast.makeText(this, "جارٍ تجهيز صورة الخلفية", Toast.LENGTH_SHORT).show();
+        // Decoding large gallery photos must not block the UI thread.
+        new Thread(() -> {
+            try {
+                WeatherBackground.savePhoto(getApplicationContext(), selectedImage);
+                runOnUiThread(() -> {
+                    refreshBackgroundPreview();
+                    WeatherWidgetProvider.updateAll(MainActivity.this);
+                    Toast.makeText(MainActivity.this,
+                            "تم تطبيق الصورة على ويدجت الطقس", Toast.LENGTH_SHORT).show();
+                });
+            } catch (Exception exception) {
+                runOnUiThread(() -> Toast.makeText(MainActivity.this,
+                        "تعذر استخدام الصورة: " + exception.getMessage(),
+                        Toast.LENGTH_LONG).show());
+            }
+        }, "BAS-Weather-Photo").start();
+    }
+
+    private void refreshBackgroundPreview() {
+        if (backgroundStatus == null || backgroundPreview == null) return;
+        if (!WeatherBackground.hasPhoto(this)) {
+            backgroundStatus.setText("الخلفية الأصلية مفعّلة");
+            backgroundPreview.setImageDrawable(null);
+            backgroundPreview.setVisibility(View.GONE);
+            return;
+        }
+        backgroundStatus.setText("صورة مخصصة محفوظة في التطبيق");
+        Bitmap image = WeatherBackground.preview(this);
+        if (image != null) {
+            backgroundPreview.setImageBitmap(image);
+            backgroundPreview.setVisibility(View.VISIBLE);
+        } else {
+            backgroundPreview.setImageDrawable(null);
+            backgroundPreview.setVisibility(View.GONE);
         }
     }
 
