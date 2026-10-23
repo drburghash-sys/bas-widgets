@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
+import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.RemoteViews;
 
@@ -38,6 +40,13 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
     @Override public void onUpdate(Context context, AppWidgetManager manager, int[] ids) {
         for (int id : ids) render(context, manager, id);
         enqueueRefresh(context);
+    }
+
+    @Override public void onAppWidgetOptionsChanged(Context context,
+                                                     AppWidgetManager manager,
+                                                     int widgetId, Bundle newOptions) {
+        super.onAppWidgetOptionsChanged(context, manager, widgetId, newOptions);
+        render(context, manager, widgetId);
     }
 
     @Override public void onReceive(Context context, Intent intent) {
@@ -126,7 +135,23 @@ public class WeatherWidgetProvider extends AppWidgetProvider {
                 context, 9002, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         v.setOnClickPendingIntent(R.id.weatherRoot, openPi);
 
+        applyFontScale(context, v);
         manager.updateAppWidget(widgetId, v);
+    }
+
+    private static void applyFontScale(Context context, RemoteViews views) {
+        float scale = WeatherStore.fontPercent(context) / 100f;
+        int[] ids = {
+                R.id.weatherTemp, R.id.weatherCondition, R.id.weatherHumidity,
+                R.id.weatherCity, R.id.weatherDistrict, R.id.batteryPercent,
+                R.id.batteryLabel, R.id.weatherUpdated
+        };
+        float[] baseSp = {31f, 14f, 13f, 17f, 12f, 27f, 10f, 10f};
+        for (int i = 0; i < ids.length; i++) {
+            views.setTextViewTextSize(ids[i], TypedValue.COMPLEX_UNIT_SP,
+                    baseSp[i] * scale);
+        }
+        // Weather icon / refresh arrow and battery pictogram retain their original size.
     }
 
     private static int[] batteryState(Context context) {

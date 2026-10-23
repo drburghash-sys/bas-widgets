@@ -9,12 +9,15 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
     private static final int REQ_LOCATION = 77;
     private TextView locationText;
+    private TextView fontStatus;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +40,37 @@ public class MainActivity extends Activity {
         locationText.setGravity(Gravity.CENTER);
         root.addView(locationText, full(0, 20));
 
+        TextView fontTitle = text("حجم خط الويدجت", 19, 0xFFFFFFFF);
+        fontTitle.setGravity(Gravity.CENTER);
+        root.addView(fontTitle, full(0, 8));
+
+        int initialPercent = WeatherStore.fontPercent(this);
+        fontStatus = text("حجم الخط: " + WeatherStore.arabicDigits(initialPercent + "٪"), 16, 0xFFD6E8F7);
+        fontStatus.setGravity(Gravity.CENTER);
+        root.addView(fontStatus, full(0, 6));
+
+        SeekBar fontSlider = new SeekBar(this);
+        fontSlider.setMax(80);
+        fontSlider.setProgress(initialPercent - 70);
+        fontSlider.setContentDescription("تعديل حجم خط ويدجت الطقس من سبعين إلى مئة وخمسين بالمئة");
+        fontSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override public void onProgressChanged(SeekBar slider, int progress, boolean fromUser) {
+                int percent = 70 + progress;
+                fontStatus.setText("حجم الخط: " + WeatherStore.arabicDigits(percent + "٪"));
+                if (fromUser) {
+                    WeatherStore.saveFontPercent(MainActivity.this, percent);
+                    WeatherWidgetProvider.updateAll(MainActivity.this);
+                }
+            }
+            @Override public void onStartTrackingTouch(SeekBar slider) {}
+            @Override public void onStopTrackingTouch(SeekBar slider) {}
+        });
+        root.addView(fontSlider, full(0, 4));
+
+        Button defaultFont = button("إعادة حجم الخط إلى ١٠٠٪");
+        defaultFont.setOnClickListener(v -> fontSlider.setProgress(30));
+        root.addView(defaultFont, full(0, 14));
+
         Button location = button("تحديث المدينة والحي");
         location.setOnClickListener(v -> ensureLocation());
         root.addView(location, full(0, 8));
@@ -57,7 +91,10 @@ public class MainActivity extends Activity {
         note.setGravity(Gravity.CENTER);
         root.addView(note, full(6, 0));
 
-        setContentView(root);
+        ScrollView scroller = new ScrollView(this);
+        scroller.setFillViewport(true);
+        scroller.addView(root);
+        setContentView(scroller);
         WeatherWidgetProvider.schedulePeriodic(this);
 
         if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED

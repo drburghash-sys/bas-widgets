@@ -11,6 +11,19 @@ public final class WeatherStore {
     private static final String PREFS = "bas_weather";
     private WeatherStore() {}
 
+    /** User-selected text scale, retained with the existing weather preferences. */
+    public static int fontPercent(Context context) {
+        int saved = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .getInt("weather_font_percent", 100);
+        return Math.max(70, Math.min(150, saved));
+    }
+
+    public static void saveFontPercent(Context context, int percent) {
+        int value = Math.max(70, Math.min(150, percent));
+        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+                .edit().putInt("weather_font_percent", value).apply();
+    }
+
     public static final class Snapshot {
         public final boolean hasData;
         public final float temperature;
